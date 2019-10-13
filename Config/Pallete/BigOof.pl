@@ -1,0 +1,10 @@
+9
+#000000
+#ffffff
+#ffc0ff
+#ff80ff
+#ff40ff
+#ff00ff
+#ff3fff
+#ff7fff
+#ffbfff
