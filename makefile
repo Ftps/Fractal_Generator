@@ -1,4 +1,4 @@
-TARGET = exe
+TARGET = Fractal_Gen
 LIBS = -lm -lpython3.7m
 CC = g++
 CFLAGS = -Wall -pedantic -o3
