@@ -111,6 +111,8 @@ class Select_Window(Gtk.Window):
         if self.l[8] > 16:
             self.good_val = 2
         Gtk.main_quit()
+        if self.good_val == -1:
+            self.destroy()
 
     def ex_prog(self, button):
         Gtk.main_quit()
@@ -141,7 +143,8 @@ class Select_Window(Gtk.Window):
 
 
 if __name__ == '__main__':
-    get_pallete()
+    if pallete == []:
+        get_pallete()
     win = Select_Window()
     win.window()
     win.connect('destroy', Gtk.main_quit)

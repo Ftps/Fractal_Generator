@@ -13,6 +13,8 @@
 #include "Py/Python.h"
 #include "complex.hpp"
 
+#define X 400.0
+
 #define GUI "Source/Files/GUI/"
 #define PALLETE "Config/Pallete/"
 #define TEMP "Config/Temp/temp.mdb"
@@ -25,7 +27,11 @@
 #define S (std::string)
 #define SS(X) std::to_string(X)
 
-#define PI 3.14159
+#if defined(_WIN32) || defined(WIN32)
+#define OPEN "start \"\" "
+#else
+#define OPEN "xdg-open "
+#endif
 
 struct Pallete {
     int color_num, r;
@@ -45,27 +51,27 @@ struct Img_Data {
 class Image {
     Pallete* c;
     Img_Data* img;
-    std::string head_xpm;
     long double cc[2], j_c[2];
     long double l, h, z, con, pp;
     int it;
     bool julia;
     mat(int) map;
     long double modu(long double, long double);
+    void generate_image(bool);
 
 public:
     Image(std::string);
     ~Image();
-    void generate_p2();
-    void generate_p3();
-    void generate_pn();
-    void generate_image();
+    void generate_p2(bool);
+    void generate_p3(bool);
+    void generate_pn(bool);
     long double power();
     void print_param();
+    void clear_preview();
 };
 
 
 void generate_pallete();
-void mandelbrot();
+bool mandelbrot();
 
 #endif

@@ -48,13 +48,13 @@ Img_Data::Img_Data(int a, int b, std::string img_name)
 Image::Image(std::string filename)
 {
     std::ifstream fp(filename);
-    std::string aux_s;
+    std::string aux_s, pal;
     int a, b;
 
     fp >> aux_s;
-    fp >> filename;
+    fp >> pal;
 
-    c = new Pallete(filename);
+    c = new Pallete(pal);
 
     fp >> julia;
     fp >> cc[0];
@@ -64,8 +64,6 @@ Image::Image(std::string filename)
     fp >> b;
 
     img = new Img_Data(a, b, aux_s);
-
-    head_xpm = XPM_HEAD + S"\"" + SS(a) + S" " + SS(b) + S" " + SS(c->color_num) + S" " + SS(c->r) + S"\",\n";
 
     map.reserve(b);
 
@@ -80,12 +78,6 @@ Image::Image(std::string filename)
     fp >> z;
     z = pow(10, z);
 
-    l = 3/z;
-    h = (b*l)/a;
-
-    cc[0] = cc[0] - l/2;
-    cc[1] = cc[1] + h/2;
-
     fp >> pp;
 
     if(julia == true){
@@ -95,6 +87,7 @@ Image::Image(std::string filename)
 
     fp >> it;
     fp >> con;
+    remove(filename.c_str());
 }
 
 Image::~Image()
@@ -103,27 +96,50 @@ Image::~Image()
     delete img;
 }
 
-void Image::generate_p2()
+void Image::generate_p2(bool preview)
 {
-    long double a, b, aux_a, ca, cb;
+    long double a, b, aux_a, ca, cb, x, y, iter, c_x, c_y;
+
+    if(preview){
+        if(img->x > img->y){
+            x = X;
+            y = (int)(img->y*(X/img->x));
+        }
+        else{
+            y = X;
+            x = (int)(img->x*(X/img->y));
+        }
+        iter = it/3;
+    }
+    else{
+        x = img->x;
+        y = img->y;
+        iter = it;
+    }
+
+    l = 3/z;
+    h = (y*l)/x;
+
+    c_x = cc[0] - l/2;
+    c_y = cc[1] + h/2;
 
     ca = j_c[0];
     cb = j_c[1];
 
     if(con != 0){
         std::cout << "CONFORMAL GENERATION\n2 POWER\n";
-        for(int i = 0; i < img->y; ++i){
-            std::cout << i*(100.0/img->y) << "%\n";
-            for(int j = 0; j < img->x; ++j){
-                a = cc[0] + j*l/img->x;
-                b = cc[1] - i*h/img->y;
+        std::cout << x << " " << y << "\n";
+        for(int i = 0; i < y; ++i){
+            for(int j = 0; j < x; ++j){
+                a = c_x + j*l/x;
+                b = c_y - i*h/y;
 
                 if(julia == false){
                     ca = a;
                     cb = b;
                 }
 
-                for(int k = 0; k < it; ++k){
+                for(int k = 0; k < iter; ++k){
                     if(modu(a, b) > 4){
                         aux_a = log(log(modu(a, b))/(2*log(2)));
                         map[i][j] = ((k - (int)aux_a) % (c->color_num - 1)) + 1;
@@ -144,11 +160,10 @@ void Image::generate_p2()
     }
     else{
         std::cout << "NON CONFORMAL GENERATION\n2 POWER\n";
-        for(int i = 0; i < img->y; ++i){
-            std::cout << i*(100.0/img->y) << "%\n";
-            for(int j = 0; j < img->x; ++j){
-                a = cc[0] + j*l/img->x;
-                b = cc[1] - i*h/img->y;
+        for(int i = 0; i < y; ++i){
+            for(int j = 0; j < x; ++j){
+                a = c_x + j*l/x;
+                b = c_y - i*h/y;
 
                 if(julia == false){
                     ca = a;
@@ -170,30 +185,52 @@ void Image::generate_p2()
         }
     }
 
-    generate_image();
+    generate_image(preview);
 }
 
-void Image::generate_p3()
+void Image::generate_p3(bool preview)
 {
-    long double a, b, aux_a, ca, cb;
+    long double a, b, aux_a, ca, cb, x, y, iter, c_x, c_y;
+
+    if(preview){
+        if(img->x > img->y){
+            x = X;
+            y = (int)(img->y*(X/img->x));
+        }
+        else{
+            y = X;
+            x = (int)(img->x*(X/img->y));
+        }
+        iter = it/3;
+    }
+    else{
+        x = img->x;
+        y = img->y;
+        iter = it;
+    }
+
+    l = 3/z;
+    h = (y*l)/x;
+
+    c_x = cc[0] - l/2;
+    c_y = cc[1] + h/2;
 
     ca = j_c[0];
     cb = j_c[1];
 
     if(con != 0){
         std::cout << "CONFORMAL GENERATION\n3 POWER\n";
-        for(int i = 0; i < img->y; ++i){
-            std::cout << i*(100.0/img->y) << "%\n";
-            for(int j = 0; j < img->x; ++j){
-                a = cc[0] + j*l/img->x;
-                b = cc[1] - i*h/img->y;
+        for(int i = 0; i < y; ++i){
+            for(int j = 0; j < x; ++j){
+                a = c_x + j*l/x;
+                b = c_y - i*h/y;
 
                 if(julia == false){
                     ca = a;
                     cb = b;
                 }
 
-                for(int k = 0; k < it; ++k){
+                for(int k = 0; k < iter; ++k){
                     if(modu(a, b) > 4){
                         aux_a = log(log(modu(a, b))/(2*log(2)));
                         map[i][j] = ((k - (int)aux_a) % (c->color_num - 1)) + 1;
@@ -214,18 +251,17 @@ void Image::generate_p3()
     }
     else{
         std::cout << "NON CONFORMAL GENERATION\n3 POWER\n";
-        for(int i = 0; i < img->y; ++i){
-            //std::cout << i*(100.0/img->y) << "%\n";
-            for(int j = 0; j < img->x; ++j){
-                a = cc[0] + j*l/img->x;
-                b = cc[1] - i*h/img->y;
+        for(int i = 0; i < y; ++i){
+            for(int j = 0; j < x; ++j){
+                a = c_x + j*l/x;
+                b = c_y - i*h/y;
 
                 if(julia == false){
                     ca = a;
                     cb = b;
                 }
 
-                for(int k = 0; k < it; ++k){
+                for(int k = 0; k < iter; ++k){
                     if(modu(a, b) > 4){
                         aux_a = log(log(modu(a, b))/(2*log(2)));
                         map[i][j] = ((k - (int)aux_a) % (c->color_num - 1)) + 1;
@@ -240,30 +276,52 @@ void Image::generate_p3()
         }
     }
 
-    generate_image();
+    generate_image(preview);
 }
 
-void Image::generate_pn()
+void Image::generate_pn(bool preview)
 {
-    long double a, b, aux_a, ca, cb, mod;
+    long double a, b, aux_a, ca, cb, mod, x, y, iter, c_x, c_y;
+
+    if(preview){
+        if(img->x > img->y){
+            x = X;
+            y = (int)(img->y*(X/img->x));
+        }
+        else{
+            y = X;
+            x = (int)(img->x*(X/img->y));
+        }
+        iter = it/3;
+    }
+    else{
+        x = img->x;
+        y = img->y;
+        iter = it;
+    }
+
+    l = 3/z;
+    h = (y*l)/x;
+
+    c_x = cc[0] - l/2;
+    c_y = cc[1] + h/2;
 
     ca = j_c[0];
     cb = j_c[1];
 
     if(con != 0){
         std::cout << "CONFORMAL GENERATION\nN POWER\n";
-        for(int i = 0; i < img->y; ++i){
-            std::cout << i*(100.0/img->y) << "%\n";
-            for(int j = 0; j < img->x; ++j){
-                a = cc[0] + j*l/img->x;
-                b = cc[1] - i*h/img->y;
+        for(int i = 0; i < y; ++i){
+            for(int j = 0; j < x; ++j){
+                a = c_x + j*l/x;
+                b = c_y - i*h/y;
 
                 if(julia == false){
                     ca = a;
                     cb = b;
                 }
 
-                for(int k = 0; k < it; ++k){
+                for(int k = 0; k < iter; ++k){
                     if((mod = modu(a, b)) > 4){
                         aux_a = log(log(modu(a, b))/(2*log(2)));
                         map[i][j] = ((k - (int)aux_a) % (c->color_num - 1)) + 1;
@@ -284,18 +342,17 @@ void Image::generate_pn()
     }
     else{
         std::cout << "NON CONFORMAL GENERATION\nN POWER\n";
-        for(int i = 0; i < img->y; ++i){
-            std::cout << i*(100.0/img->y) << "%\n";
-            for(int j = 0; j < img->x; ++j){
-                a = cc[0] + j*l/img->x;
-                b = cc[1] - i*h/img->y;
+        for(int i = 0; i < y; ++i){
+            for(int j = 0; j < x; ++j){
+                a = c_x + j*l/x;
+                b = c_y - i*h/y;
 
                 if(julia == false){
                     ca = a;
                     cb = b;
                 }
 
-                for(int k = 0; k < it; ++k){
+                for(int k = 0; k < iter; ++k){
                     if(mod = modu(a, b) > 4){
                         aux_a = log(log(modu(a, b))/(2*log(2)));
                         map[i][j] = ((k - (int)aux_a) % (c->color_num - 1)) + 1;
@@ -310,22 +367,35 @@ void Image::generate_pn()
         }
     }
 
-    generate_image();
+    generate_image(preview);
 }
 
-void Image::generate_image()
+void Image::generate_image(bool preview)
 {
-    std::ofstream fp(IMAGE + img->name + S".xpm", std::ios::out | std::ios::trunc);
+    std::ofstream fp(IMAGE + ((preview)? S"preview":img->name) + S".xpm", std::ios::out | std::ios::trunc);
     std::string fmt_s = S"%0" + SS(c->r) + S"x";
     boost::format fmt(fmt_s);
+    int x, y;
 
-    fp << head_xpm;
+    std::cout << "Image generation complete, proceeding with writing. . .\n";
+
+    if(preview){
+        x = X;
+        y = (int)img->y*(X/img->x);
+    }
+    else{
+        x = img->x;
+        y = img->y;
+    }
+
+    fp << XPM_HEAD + S"\"" + SS(x) + S" " + SS(y) + S" " + SS(c->color_num) + S" " + SS(c->r) + S"\",\n";
+
 
     c->print_pallete(fp, fmt);
 
-    for(int i = 0; i < img->y; ++i){
+    for(int i = 0; i < y; ++i){
         fp << "\"";
-        for(int j = 0; j < img->x; ++j){
+        for(int j = 0; j < x; ++j){
             fp << fmt % map[i][j];
         }
         if(img->y - i - 1){
@@ -338,9 +408,9 @@ void Image::generate_image()
 
     fp.close();
 
-    fmt_s = S"convert -quality 100 " + IMAGE + img->name + S".xpm " + IMAGE + img->name + S".png";
-    system(fmt_s.c_str());
-    remove((IMAGE + img->name + S".xpm").c_str());
+    system((S"convert -quality 100 " + IMAGE + ((preview)? S"preview":img->name) + S".xpm " + IMAGE + ((preview)? S"preview":img->name) + S".png").c_str());
+    remove((IMAGE + ((preview)? S"preview":img->name) + S".xpm").c_str());
+    std::cout << "Image complete. Exiting program . . .\n";
 }
 
 long double Image::power()
@@ -365,13 +435,33 @@ void Image::print_param()
     std::cout << "Focus Point: " << cc[0] << " + " << cc[1] << "i\n";
     std::cout << "Zoom level: " << z << "\n";
     std::cout << "Image Size: " << img->x << "x" << img->y << "\n";
-    std::cout << "Iterations per Point: " << it << "\n\n\n";
-    std::cout << "Press enter to continue. . .";
-    getchar();
+    std::cout << "Iterations per Point: " << it << "\n";
 
-
-    std::cout << "\n\nGeneration Progress:\n";
+    std::cout << "\n\nGenerating Preview . . .:\n";
 }
+
+void Image::clear_preview()
+{
+    int x, y;
+
+    if(img->x > img->y){
+        x = X;
+        y = (int)(img->y*(X/img->x));
+    }
+    else{
+        y = X;
+        x = (int)(img->x*(X/img->y));
+    }
+
+    for(int i = 0; i < y; ++i){
+        for(int j = 0; j < x; ++j){
+            map[i][j] = 0;
+        }
+    }
+}
+
+
+
 
 void generate_pallete()
 {
@@ -438,13 +528,28 @@ void generate_pallete()
 
 }
 
-void mandelbrot()
+bool mandelbrot()
 {
     Image img(TEMP);
+    char c;
 
     img.print_param();
 
-    if(img.power() == 2) img.generate_p2();
-    else if(img.power() == 3) img.generate_p3();
-    else img.generate_pn();
+    if(img.power() == 2) img.generate_p2(true);
+    else if(img.power() == 3) img.generate_p3(true);
+    else img.generate_pn(true);
+
+    std::cout << "Preview generated. Proceed with full generation? [Y/n] ";
+    system((OPEN + S IMAGE + S"preview.png").c_str());
+    fflush(stdout);
+    c = getchar();
+    remove((IMAGE + S"preview.png").c_str());
+    if(c == 'n' || c == 'N') return true;
+    else img.clear_preview();
+
+    if(img.power() == 2) img.generate_p2(false);
+    else if(img.power() == 3) img.generate_p3(false);
+    else img.generate_pn(false);
+
+    return false;
 }
