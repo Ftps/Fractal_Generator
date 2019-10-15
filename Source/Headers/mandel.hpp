@@ -18,6 +18,7 @@
 #define GUI "Source/Files/GUI/"
 #define PALLETE "Config/Pallete/"
 #define TEMP "Config/Temp/temp.mdb"
+#define MENU "Config/Temp/choice.mdb"
 #define IMAGE "Images/"
 #define XPM_HEAD "/* XPM */\nstatic char * img_xpm[] = {\n"
 
@@ -71,7 +72,6 @@ public:
 };
 
 
-void generate_pallete();
 bool mandelbrot();
 
 #endif

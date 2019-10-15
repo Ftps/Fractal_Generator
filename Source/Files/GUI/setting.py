@@ -14,10 +14,19 @@ parameter_name = ["Picture Name:", "Pallete:", "Fractal Type:",
 video = ["Yes", "No"]
 fractal = ["Mandelbrot Set", "Julia Set"]
 
-err_msg = ["All entries must be filled in correctly.", "Image must have a name.", "Zoom cannot be bigger than 10^16"]
+err_msg =  ["All entries must be filled in correctly.", "Image must have a name.",
+            "Zoom cannot be bigger than 10^16", "Invalid colour.", "Invalid number.",
+            "Pallette must end on a colour without next iterations.",
+            "Pallette must have at least two colours."]
 
+RGB = ["R:", "G:", "B:"]
+hex = []
+for i in range(16):
+    hex.append("{0:0{1}x}".format(i,1))
 
 pallete = []
+
+menu_temp = temp_path + "choice.mdb"
 
 class ErrPopup(Gtk.Window):
     def __init__(self, err_name):
@@ -93,3 +102,29 @@ def print_in_temp(l):
 
     fp.write(str(l[9+a]) + "\n")
     fp.write(str(l[10+a]))
+
+def generate_pallette(name, pall):
+    pal = []
+
+    for i in range(len(pall)):
+        if Counter(pall[i][1]) == Counter("-"):
+            pal.append(pall[i][0])
+        else:
+            l = int(pall[i][1])+1
+            beg = [0,0,0]
+            end = [0,0,0]
+            for j in range(3):
+                beg[j] = int(pall[i][0][2*j+1:2*j+3], 16)
+                end[j] = int(pall[i+1][0][2*j+1:2*j+3], 16)
+            for j in range(l):
+                aux = 0
+                aux_s = "#"
+                for k in range(3):
+                    aux = int(round(beg[k] + (end[k]-beg[k])*j//l, 0))
+                    aux_s = aux_s + "{0:0{1}x}".format(aux,2)
+                pal.append(aux_s)
+
+    fp = open(pal_path + name + ".pl", "w")
+    fp.write(str(len(pal)) + "\n")
+    for elem in pal:
+        fp.write(elem + "\n")

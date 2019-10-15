@@ -2,7 +2,7 @@ import sys, os
 sys.path.append(os.path.abspath("Source/Files/GUI"))
 from setting import *
 
-import os, gi, warnings
+import gi, warnings
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
 from collections import Counter
@@ -32,7 +32,7 @@ class Select_Window(Gtk.Window):
         vid_but.connect("clicked", self.vid_set)
 
         box = []
-        for i in range(11):
+        for _ in range(11):
             box.append(Gtk.Box(spacing=6))
 
         grid.attach(box[0], 0, 0, 1, 1)
@@ -93,6 +93,8 @@ class Select_Window(Gtk.Window):
             self.good_val = 0
             Gtk.main_quit()
             return
+
+        self.l[0].replace(" ", "_")
 
         for i in range(len(self.entries)):
             try:

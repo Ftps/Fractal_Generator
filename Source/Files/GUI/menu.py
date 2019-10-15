@@ -1,5 +1,6 @@
 import sys, os
 sys.path.append(os.path.abspath("Source/Files/GUI"))
+from setting import *
 
 import os, gi, warnings
 gi.require_version('Gtk', '3.0')
@@ -62,6 +63,12 @@ if __name__ == '__main__':
         if win.sel() == 0:
             sys.exit(0)
         elif win.sel() == 1:
+            fp = open(menu_temp, "w")
+            fp.write("1")
+            fp.close()
             break
         else:
-            a = 1/0
+            fp = open(menu_temp, "w")
+            fp.write("0")
+            fp.close()
+            break
