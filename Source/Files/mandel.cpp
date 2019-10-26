@@ -80,25 +80,36 @@ Image::Image(std::string filename)
 
     fp >> pp;
 
-    if(julia == true){
-        fp >> j_c[0];
-        fp >> j_c[1];
-    }
+    fp >> j_c[0];
+    fp >> j_c[1];
 
     fp >> it;
     fp >> con;
-    remove(filename.c_str());
+
+    prog = new boost::format("%05.2f");
 }
 
 Image::~Image()
 {
     delete c;
     delete img;
+    delete prog;
+}
+
+void Image::progress(int i, int y)
+{
+    if(i){
+        std::cout << "\b\b\b\b\b\b";
+    }
+
+    std::cout << *prog % ((100.0*i)/y) << "\%";
+    fflush(stdout);
+
 }
 
 void Image::generate_p2(bool preview)
 {
-    long double a, b, aux_a, ca, cb, x, y, iter, c_x, c_y;
+    long double a, b, aux_a, ca, cb, x, y, iter, c_x, c_y, b_aux;
 
     if(preview){
         if(img->x > img->y){
@@ -130,9 +141,10 @@ void Image::generate_p2(bool preview)
         std::cout << "CONFORMAL GENERATION\n2 POWER\n";
         std::cout << x << " " << y << "\n";
         for(int i = 0; i < y; ++i){
+            b_aux = c_y - i*h/y;
             for(int j = 0; j < x; ++j){
                 a = c_x + j*l/x;
-                b = c_y - i*h/y;
+                b = b_aux;
 
                 if(julia == false){
                     ca = a;
@@ -161,9 +173,11 @@ void Image::generate_p2(bool preview)
     else{
         std::cout << "NON CONFORMAL GENERATION\n2 POWER\n";
         for(int i = 0; i < y; ++i){
+            b_aux = c_y - i*h/y;
+            progress(i, y);
             for(int j = 0; j < x; ++j){
                 a = c_x + j*l/x;
-                b = c_y - i*h/y;
+                b = b_aux;
 
                 if(julia == false){
                     ca = a;
@@ -190,7 +204,7 @@ void Image::generate_p2(bool preview)
 
 void Image::generate_p3(bool preview)
 {
-    long double a, b, aux_a, ca, cb, x, y, iter, c_x, c_y;
+    long double a, b, aux_a, ca, cb, x, y, iter, c_x, c_y, b_aux;
 
     if(preview){
         if(img->x > img->y){
@@ -221,9 +235,10 @@ void Image::generate_p3(bool preview)
     if(con != 0){
         std::cout << "CONFORMAL GENERATION\n3 POWER\n";
         for(int i = 0; i < y; ++i){
+            b_aux = c_y - i*h/y;
             for(int j = 0; j < x; ++j){
                 a = c_x + j*l/x;
-                b = c_y - i*h/y;
+                b = b_aux;
 
                 if(julia == false){
                     ca = a;
@@ -252,9 +267,10 @@ void Image::generate_p3(bool preview)
     else{
         std::cout << "NON CONFORMAL GENERATION\n3 POWER\n";
         for(int i = 0; i < y; ++i){
+            b_aux = c_y - i*h/y;
             for(int j = 0; j < x; ++j){
                 a = c_x + j*l/x;
-                b = c_y - i*h/y;
+                b = b_aux;
 
                 if(julia == false){
                     ca = a;
@@ -281,7 +297,7 @@ void Image::generate_p3(bool preview)
 
 void Image::generate_pn(bool preview)
 {
-    long double a, b, aux_a, ca, cb, mod, x, y, iter, c_x, c_y;
+    long double a, b, aux_a, ca, cb, mod, x, y, iter, c_x, c_y, b_aux;
 
     if(preview){
         if(img->x > img->y){
@@ -312,9 +328,10 @@ void Image::generate_pn(bool preview)
     if(con != 0){
         std::cout << "CONFORMAL GENERATION\nN POWER\n";
         for(int i = 0; i < y; ++i){
+            b_aux = c_y - i*h/y;
             for(int j = 0; j < x; ++j){
                 a = c_x + j*l/x;
-                b = c_y - i*h/y;
+                b = b_aux;
 
                 if(julia == false){
                     ca = a;
@@ -343,9 +360,10 @@ void Image::generate_pn(bool preview)
     else{
         std::cout << "NON CONFORMAL GENERATION\nN POWER\n";
         for(int i = 0; i < y; ++i){
+            b_aux = c_y - i*h/y;
             for(int j = 0; j < x; ++j){
                 a = c_x + j*l/x;
-                b = c_y - i*h/y;
+                b = b_aux;
 
                 if(julia == false){
                     ca = a;
@@ -377,7 +395,7 @@ void Image::generate_image(bool preview)
     boost::format fmt(fmt_s);
     int x, y;
 
-    std::cout << "Image generation complete, proceeding with writing. . .\n";
+    std::cout << "\n\nImage generation complete, proceeding with writing. . .\n";
 
     if(preview){
         x = X;
@@ -476,8 +494,9 @@ bool mandelbrot()
 
     std::cout << "Preview generated. Proceed with full generation? [Y/n] ";
     system((OPEN + S IMAGE + S"preview.png").c_str());
-    fflush(stdout);
     c = getchar();
+    while ((getchar()) != '\n');
+
     remove((IMAGE + S"preview.png").c_str());
     if(c == 'n' || c == 'N') return true;
     else img.clear_preview();

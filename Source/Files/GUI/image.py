@@ -24,6 +24,11 @@ class Select_Window(Gtk.Window):
         grid.set_column_homogeneous(True)
         grid.set_row_homogeneous(True)
 
+        exists = os.path.isfile(temp_path + "temp.mdb")
+
+        if exists:
+            l = read_file(temp_path + "temp.mdb")
+
         ok_but = Gtk.Button.new_with_label("Run")
         ok_but.connect("clicked", self.run_math)
         ex_but = Gtk.Button.new_with_label("Exit")
@@ -43,6 +48,8 @@ class Select_Window(Gtk.Window):
             if i == 0:
                 grid.attach(self.texts[0], 1, 1, 2, 1)
                 self.name = Gtk.Entry()
+                if exists:
+                    self.name.set_text(l[0])
                 grid.attach(self.name, 3, 1, 7, 1)
             else:
                 if i%2 == 0:
@@ -53,15 +60,21 @@ class Select_Window(Gtk.Window):
                     self.select[0].set_entry_text_column(0)
                     for p in pallete:
                         self.select[0].append_text(p)
+                    if exists:
+                        self.select[0].set_active(pallete.index(l[1]))
                     grid.attach(self.select[0], 3, 2, 2, 1)
                 elif i == 2:
                     self.select.append(Gtk.ComboBoxText())
                     self.select[1].set_entry_text_column(0)
                     for p in fractal:
                         self.select[1].append_text(p)
+                    if exists:
+                        self.select[1].set_active(int(l[2]))
                     grid.attach(self.select[1], 8, 2, 2, 1)
                 else:
                     self.entries.append(Gtk.Entry())
+                    if exists:
+                        self.entries[len(self.entries)-1].set_text(l[i])
                     grid.attach(self.entries[i-3], 5*((i-1)%2)+3, 2 + (i-1)//2, 2, 1)
 
         grid.attach(box[7], 1, 8, 2, 1)
@@ -103,6 +116,8 @@ class Select_Window(Gtk.Window):
                 elif i//2 == 3:
                     if self.l[2] == fractal[1]:
                         self.l.append(float(self.entries[i].get_text()))
+                    else:
+                        self.l.append("0")
                 else:
                     self.l.append(float(self.entries[i].get_text()))
             except:

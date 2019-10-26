@@ -56,9 +56,11 @@ class Image {
     long double l, h, z, con, pp;
     int it;
     bool julia;
+    boost::format* prog;
     mat(int) map;
     long double modu(long double, long double);
     void generate_image(bool);
+    void progress(int, int);
 
 public:
     Image(std::string);

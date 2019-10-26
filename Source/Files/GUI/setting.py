@@ -86,22 +86,17 @@ def print_in_temp(l):
     fp.write(pal_path + l[1] + "\n")
 
     if l[2] == fractal[1]:
-        a = 2
         fp.write("1\n")
     else:
-        a = 0
         fp.write("0\n")
 
     fp.write(str(l[3]) + " " + str(l[4]) + "\n")
     fp.write(str(l[5]) + " " + str(l[6]) + "\n")
     fp.write(str(l[7]) + "\n")
     fp.write(str(l[8]) + "\n")
-
-    if l[2] == fractal[1]:
-        fp.write(str(l[9]) + " " + str(l[10]) + "\n")
-
-    fp.write(str(l[9+a]) + "\n")
-    fp.write(str(l[10+a]))
+    fp.write(str(l[9]) + " " + str(l[10]) + "\n")
+    fp.write(str(l[11]) + "\n")
+    fp.write(str(l[12]))
 
 def generate_pallette(name, pall):
     pal = []
@@ -128,3 +123,15 @@ def generate_pallette(name, pall):
     fp.write(str(len(pal)) + "\n")
     for elem in pal:
         fp.write(elem + "\n")
+
+def read_file(filename):
+    l = []
+    with open(filename) as f:
+        for line in f:
+            for p in line.split():
+                l.append(p)
+
+    a, l[1] = os.path.split(l[1])
+    l[1], a = os.path.splitext(l[1])
+
+    return l
