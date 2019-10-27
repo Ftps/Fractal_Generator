@@ -1,5 +1,5 @@
 TARGET = Fractal_Gen
-LIBS = -lm -lpython3.7m
+LIBS = -lm -lpython3.7m -lboost_system -lboost_filesystem
 CC = g++
 CFLAGS = -Wall -pedantic -o3
 H_LOC = Source/Headers

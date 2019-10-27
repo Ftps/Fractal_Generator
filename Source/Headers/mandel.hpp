@@ -8,6 +8,7 @@
 #include <vector>
 #include <fstream>
 #include <boost/format.hpp>
+#include <boost/filesystem.hpp>
 
 #define PY_SSIZE_T_CLEAN
 #include "Py/Python.h"

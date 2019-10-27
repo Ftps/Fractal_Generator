@@ -11,7 +11,6 @@ The Julia Center point corresponds to the value of c of the iterable function wh
 TO-DO LIST:
 - Windows compatibility;
 - general power fractals;
-- detect identical names;
 - and other image organization things;
 - use boost:gil for better image manipulation;
 - save image parameters after generation;
@@ -23,3 +22,4 @@ DONE:
 - 2nd and 3rd power fractals;
 - Python GUI;
 - progress status;
+- detect identical names;

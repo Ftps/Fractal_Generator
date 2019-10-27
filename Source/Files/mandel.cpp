@@ -87,6 +87,18 @@ Image::Image(std::string filename)
     fp >> con;
 
     prog = new boost::format("%05.2f");
+
+    if(boost::filesystem::exists(IMAGE + img->name + S".png")){
+        aux_s = S"" + img->name;
+        std::cout << "\nImage name already exists, numerating . . .";
+        for(int i = 1; 1; ++i){
+            img->name = aux_s + S"_" + SS(i);
+            if(!boost::filesystem::exists(IMAGE + img->name + S".png")){
+                break;
+            }
+        }
+        std::cout << "\nImage named as " << img->name << ".png\n";
+    }
 }
 
 Image::~Image()
