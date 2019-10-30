@@ -382,14 +382,17 @@ void Image::generate_pn(bool preview)
                 }
 
                 for(int k = 0; k < iter; ++k){
-                    if(mod = modu(a, b) > 4){
+                    if((mod = modu(a, b)) > 4){
                         aux_a = log(log(modu(a, b))/(2*log(2)));
                         map[i][j] = ((k - (int)aux_a) % (c->color_num - 1)) + 1;
                         break;
                     }
-
-                    aux_a = ca + pow(mod, pp/2)*cos(pp*atan(b/a));
-                    b = cb + pow(mod, pp/2)*sin(pp*atan(b/a));
+                    /*std::cout << a << " + " << b << "i\n";
+                    std::cout << "Mod = " << mod << "\n";
+                    std::cout << "Arg = " << atan(b/a) << "\n";
+                    getchar();*/
+                    aux_a = ca + pow(mod, pp/2.0)*cos(pp*atan(b/a));
+                    b = cb + pow(mod, pp/2.0)*sin(pp*atan(b/a));
                     a = aux_a;
                 }
             }

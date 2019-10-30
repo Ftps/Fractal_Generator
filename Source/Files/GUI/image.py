@@ -115,17 +115,19 @@ class Select_Window(Gtk.Window):
                     self.l.append(int(self.entries[i].get_text()))
                 elif i//2 == 3:
                     if self.l[2] == fractal[1]:
-                        self.l.append(float(self.entries[i].get_text()))
+                        test = float(self.entries[i].get_text())
+                        self.l.append(self.entries[i].get_text())
                     else:
                         self.l.append("0")
                 else:
-                    self.l.append(float(self.entries[i].get_text()))
+                    test = float(self.entries[i].get_text())
+                    self.l.append(self.entries[i].get_text())
             except:
                 self.good_val = 0
                 Gtk.main_quit()
                 return
 
-        if self.l[8] > 16:
+        if float(self.l[8]) > 16:
             self.good_val = 2
         Gtk.main_quit()
         if self.good_val == -1:
