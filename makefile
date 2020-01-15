@@ -1,7 +1,7 @@
 TARGET = Fractal_Gen
-LIBS = -lm -lboost_system -lboost_filesystem -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -lQt5Widgets -lQt5Gui -lQt5Core  -fPIC
+LIBS = -lm -lboost_system -lboost_filesystem -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -lQt5Widgets -lQt5Gui -lQt5Core
 CC = g++
-CFLAGS = -Wall -pedantic -o3 -L/usr/include/qt/QtWidgets -L/usr/include/qt -L/usr/include/qt/QtCore -L/usr/include/qt/QtGui
+CFLAGS = -Wall -pedantic -o3 -I/usr/include/qt/QtWidgets -I/usr/include/qt -I/usr/include/qt/QtCore -I/usr/include/qt/QtGui -fPIC
 H_LOC = Source/Headers
 O_LOC = Source/Files
 
