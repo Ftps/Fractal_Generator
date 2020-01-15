@@ -114,7 +114,7 @@ void Image::progress(int i, int y)
         std::cout << "\b\b\b\b\b\b";
     }
 
-    std::cout << *prog % ((100.0*i)/y) << "\%";
+    std::cout << *prog % ((100.0*i)/y) << "%%";
     fflush(stdout);
 
 }

@@ -1,0 +1,3 @@
+#! /bin/bash
+
+g++ -lm -lboost_system -lboost_filesystem -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -lQt5Widgets -lQt5Gui -lQt5Core  -fPIC -Wall -pedantic -o3 -I/usr/include/qt/QtWidgets -I/usr/include/qt -I/usr/include/qt/QtCore -I/usr/include/qt/QtGui Source/Files/*.cpp -o Fractal_Gen

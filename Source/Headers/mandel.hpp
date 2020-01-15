@@ -9,10 +9,10 @@
 #include <fstream>
 #include <boost/format.hpp>
 #include <boost/filesystem.hpp>
-
-#define PY_SSIZE_T_CLEAN
-#include "Py/Python.h"
-#include "complex.hpp"
+#include <QApplication>
+#include <QWidget>
+#include <QPushButton>
+#include <QIcon>
 
 #define X 400.0
 
