@@ -1,4 +1,7 @@
 # Fractal_Generator
+
+CURRENTLY UNUSABLE
+
 A program to generate images of fractals based on Mandelbrot and Julia sets using the family of funtions f(z) = z^n + c. Also able to perform conformal transformations on the on the set.
 
 
@@ -9,9 +12,10 @@ The Center Point corresponds to where the mapping of the middle point in the pic
 The Julia Center point corresponds to the value of c of the iterable function when selecting a Julia Set fractal, its value can be left empty when selecting a Mandelbrot Set fractal. The number of iterations corresponds to the maximum number of iterations the escape algorithm will calculate for each point (this will depend on the zoom and on the area you're generating the fractal). Finally, the Conformal Factor value will apply a transformation of the sort g(z) = z + k/z after each iteration to create different shapes in the fractal (fill in 0 for no conformal mappings between iterations).
 
 TO-DO LIST:
+- Qt C++ GUI (currently working)
 - Windows compatibility;
 - and other image organization things;
-- use boost:gil for better image manipulation;
+- image manipulation;
 - save image parameters after generation;
 - zooms deeper than 1e16;
 
@@ -20,6 +24,6 @@ DONE:
 - preview;
 - 2nd and 3rd power fractals;
 - general power fractals;
-- Python GUI;
+- Python GUI (removed);
 - progress status;
 - detect identical names;

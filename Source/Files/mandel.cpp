@@ -125,12 +125,12 @@ void Image::generate_p2(bool preview)
 
     if(preview){
         if(img->x > img->y){
-            x = X;
-            y = (int)(img->y*(X/img->x));
+            x = XX;
+            y = (int)(img->y*(XX/img->x));
         }
         else{
-            y = X;
-            x = (int)(img->x*(X/img->y));
+            y = XX;
+            x = (int)(img->x*(XX/img->y));
         }
         iter = it/3;
     }
@@ -219,12 +219,12 @@ void Image::generate_p3(bool preview)
 
     if(preview){
         if(img->x > img->y){
-            x = X;
-            y = (int)(img->y*(X/img->x));
+            x = XX;
+            y = (int)(img->y*(XX/img->x));
         }
         else{
-            y = X;
-            x = (int)(img->x*(X/img->y));
+            y = XX;
+            x = (int)(img->x*(XX/img->y));
         }
         iter = it/3;
     }
@@ -312,12 +312,12 @@ void Image::generate_pn(bool preview)
 
     if(preview){
         if(img->x > img->y){
-            x = X;
-            y = (int)(img->y*(X/img->x));
+            x = XX;
+            y = (int)(img->y*(XX/img->x));
         }
         else{
-            y = X;
-            x = (int)(img->x*(X/img->y));
+            y = XX;
+            x = (int)(img->x*(XX/img->y));
         }
         iter = it/3;
     }
@@ -412,8 +412,8 @@ void Image::generate_image(bool preview)
     std::cout << "\n\nImage generation complete, proceeding with writing. . .\n";
 
     if(preview){
-        x = X;
-        y = (int)img->y*(X/img->x);
+        x = XX;
+        y = (int)img->y*(XX/img->x);
     }
     else{
         x = img->x;
@@ -477,12 +477,12 @@ void Image::clear_preview()
     int x, y;
 
     if(img->x > img->y){
-        x = X;
-        y = (int)(img->y*(X/img->x));
+        x = XX;
+        y = (int)(img->y*(XX/img->x));
     }
     else{
-        y = X;
-        x = (int)(img->x*(X/img->y));
+        y = XX;
+        x = (int)(img->x*(XX/img->y));
     }
 
     for(int i = 0; i < y; ++i){

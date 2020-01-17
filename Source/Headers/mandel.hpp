@@ -9,12 +9,8 @@
 #include <fstream>
 #include <boost/format.hpp>
 #include <boost/filesystem.hpp>
-#include <QApplication>
-#include <QWidget>
-#include <QPushButton>
-#include <QIcon>
 
-#define X 400.0
+#define XX 400.0
 
 #define GUI "Source/Files/GUI/"
 #define PALLETE "Config/Pallete/"

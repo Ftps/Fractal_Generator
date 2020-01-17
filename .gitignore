@@ -2,3 +2,5 @@
 *.xpm
 Fractal_Gen
 *.o
+*.moc.*
+error.txt
