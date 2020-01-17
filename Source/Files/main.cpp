@@ -12,9 +12,7 @@ int main(int argc, char *argv[])
     menu.show();
     app.exec();
 
-    if(menu.Next() == 2){
-        app.exec();
-    }
+    std::cout << menu.Next() << std::endl;
 
     return 0;
 }

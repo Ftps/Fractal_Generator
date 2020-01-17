@@ -8,6 +8,7 @@
 #include <QSlider>
 #include <QGridLayout>
 #include <QVBoxLayout>
+#include <QSignalMapper>
 #include <vector>
 
 // for debug
@@ -15,17 +16,12 @@
 #include <QTextStream>
 #include <typeinfo>
 
-class Main_Menu : public QWidget { Q_OBJECT
+class Main_Menu : public QWidget {
     public:
         Main_Menu(QWidget* parent = 0);
         int Next();
     private:
         int next;
-
-        void Action(QString name);
-        void Gen_Pic();
-        void Gen_Pal();
-        void Quit();
 };
 
 #endif
