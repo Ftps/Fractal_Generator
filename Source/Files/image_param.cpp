@@ -1,13 +1,23 @@
 #include "../Headers/image_param.hpp"
 
-QStringList l_name = {  "Pallete:", "Fractal Type:", "Real Center:",
-                        "Imaginary Center:", "Julia Real Center:",
-                        "Julia Imaginary Center:", "Resolution X:",
-                        "Resolution Y:", "Zoom:", "Power:",
-                        "Iterations:", "Conformal Constant:"};
+const QStringList error_n = {   "Name cannot be empty.", "Real Center must be a number."
+                                "Imaginary Center must be a number.",
+                                "Julia Real Center must be a number.",
+                                "Julia Imaginary Center must be a number.",
+                                "Resolution X must be a positive integer.",
+                                "Resolution Y must be a positive integer.",
+                                "Zoom must be a number.", "Power must be a number.",
+                                "Iterations must be a positive integer.",
+                                "Conformal Constant must be a number." };
 
-QStringList fractal = { "Mandelbrot Set", "Julia Set" };
-QStringList btns_n = { "Run", "Preview", "Exit" };
+const QStringList l_name = {    "Pallete:", "Fractal Type:", "Real Center:",
+                                "Imaginary Center:", "Julia Real Center:",
+                                "Julia Imaginary Center:", "Resolution X:",
+                                "Resolution Y:", "Zoom:", "Power:",
+                                "Iterations:", "Conformal Constant:"};
+
+const QStringList fractal = { "Mandelbrot Set", "Julia Set" };
+const QStringList btns_n = { "Run", "Preview", "Exit" };
 
 
 Image_Param::Image_Param(QWidget *parent) : QWidget(parent)
@@ -120,14 +130,10 @@ int Image_Param::InspectValues()
 
     for(int i = 1; i < (int)lines.size(); ++i){
         if(i == 5 || i == 6 || i == 9){
-            if(!isInteger(lines[i]->text().toStdString())) return i;
+            if(!isIntegerP(lines[i]->text().toStdString())) return i;
         }
         else{
-            try{
-                std::stold(lines[i]->text().toStdString());
-            } catch(std::invalid_argument const &e){
-                return i;
-            }
+            if(!isLDouble(lines[i]->text().toStdString())) return i;
         }
     }
 
@@ -147,18 +153,37 @@ void Image_Param::UpdatePreview()
 
 void Image_Param::Run()
 {
+    int err;
+    Error_Qt *error;
+
     std::cout << "Running . . ." << std::endl;
-    std::cout << InspectValues() << std::endl;
+    if((err = InspectValues()) != -1){
+        error = new Error_Qt(error_n[err]);
+        error->show();
+
+        return;
+    }
 }
 
 
 
-inline bool isInteger(const std::string& s)
+inline bool isIntegerP(const std::string& s)
+{
+    if(s.empty()) return false;
+    else if(s[0] == '-') return false;
+
+    char *p;
+    strtol(s.c_str(), &p, 10);
+
+    return (*p == 0);
+}
+
+inline bool isLDouble(const std::string& s)
 {
     if(s.empty()) return false;
 
-    char * p;
-    strtol(s.c_str(), &p, 10);
+    char *p;
+    strtold(s.c_str(), &p);
 
     return (*p == 0);
 }

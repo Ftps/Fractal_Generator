@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "mandel_qt.hpp"
+#include "error_qt.hpp"
 
 // for debug
 #include <iostream>
@@ -41,4 +42,5 @@ class Image_Param : public QWidget {
         void Run();
 };
 
-inline bool isInteger(const std::string& s);
+inline bool isIntegerP(const std::string& s);
+inline bool isLDouble(const std::string& s);
