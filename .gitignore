@@ -5,3 +5,5 @@ Fractal_Gen
 *.moc.*
 error.txt
 Images
+test.cpp
+test
