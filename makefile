@@ -1,11 +1,11 @@
 TARGET = Fractal_Gen
-LIBS = -lm -lboost_system -lboost_filesystem -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -lQt5Widgets -lQt5Gui -lQt5Core
 CC = g++
 MOC = moc-qt5
+LIBS = -lm -lboost_system -lboost_filesystem -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -lQt5Widgets -lQt5Gui -lQt5Core
 CFLAGS = -Wall -pedantic -o3 -fPIC
+INCDIRS = -I/usr/include/qt -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtCore -I/usr/include/qt/QtGui
 H_LOC = Source/Headers
 O_LOC = Source/Files
-INCDIRS = -I/usr/include/qt -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtCore -I/usr/include/qt/QtGui
 
 HEADERS = $(wildcard $(H_LOC)/*.hpp)
 MOCS = $(shell grep -l Q_OBJECT $(HEADERS))

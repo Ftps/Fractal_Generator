@@ -1,5 +1,4 @@
-#ifndef MANDEL_CPP
-#define MANDEL_CPP
+#pragma once
 
 #include <iostream>
 #include <cmath>
@@ -72,5 +71,3 @@ public:
 
 
 bool mandelbrot();
-
-#endif

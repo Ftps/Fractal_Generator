@@ -1,27 +1,21 @@
-#ifndef GUI_HPP
-#define GUI_HPP
+#pragma once
 
 #include <QApplication>
 #include <QWidget>
 #include <QPushButton>
-#include <QLabel>
-#include <QSlider>
 #include <QGridLayout>
-#include <QVBoxLayout>
 #include <QSignalMapper>
 #include <vector>
 
-// for debug
-#include <iostream>
-#include <QTextStream>
-#include <typeinfo>
-
 class Main_Menu : public QWidget {
     public:
-        Main_Menu(QWidget* parent = 0);
+        Main_Menu(QWidget *parent = 0);
+        ~Main_Menu();
         int Next();
+        void Reset();
     private:
         int next;
+        QGridLayout *grid;
+        std::vector<QPushButton*> btn;
+        QSignalMapper *sigmap;
 };
-
-#endif
