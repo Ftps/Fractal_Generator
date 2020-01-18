@@ -1,4 +1,4 @@
-#include "../Headers/mandel.hpp"
+#include "../Headers/mandel_qt.hpp"
 #include "../Headers/main_menu.hpp"
 #include "../Headers/image_param.hpp"
 
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
         else{
             std::cout << "Exiting . . ." << std::endl;
         }
-    }while(!menu.Next());
+    }while(menu.Next());
 
 
 

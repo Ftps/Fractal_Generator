@@ -9,9 +9,9 @@
 #include <QLineEdit>
 #include <QComboBox>
 #include <QPixmap>
-#include <string>
 #include <vector>
-#include <unistd.h>
+
+#include "mandel_qt.hpp"
 
 // for debug
 #include <iostream>
@@ -20,11 +20,6 @@
 
 #define W_X 100
 #define W_Y 50
-#define GetCurrentDir getcwd
-
-struct Image_Data{
-    std::string name, pal;
-};
 
 class Image_Param : public QWidget {
     public:
@@ -38,11 +33,9 @@ class Image_Param : public QWidget {
         std::vector<QComboBox*> combos;
         std::vector<QPushButton*> btns;
 
-        QLabel* new_label(QString name = "", int length = 1, int heigth = 1);
+        QLabel* new_label(const QString& name = "", int length = 1, int heigth = 1);
         QLineEdit* new_line(int size = 2);
-        QPushButton* new_btn(QString name);
+        QPushButton* new_btn(const QString& name);
         void UpdatePreview();
         void Run();
 };
-
-std::string GetCurrentWorkingDir(void);

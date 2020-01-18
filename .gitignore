@@ -7,3 +7,5 @@ error.txt
 Images
 test.cpp
 test
+mandel.cpp
+mandel.hpp

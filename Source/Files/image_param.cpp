@@ -78,7 +78,7 @@ Image_Param::~Image_Param()
     }
 }
 
-QLabel* Image_Param::new_label(QString name, int length, int heigth)
+QLabel* Image_Param::new_label(const QString& name, int length, int heigth)
 {
     QLabel *emp = new QLabel(name, this);
     emp->setFixedSize(W_X*length, W_Y*heigth);
@@ -95,7 +95,7 @@ QLineEdit* Image_Param::new_line(int size)
     return emp;
 }
 
-QPushButton* Image_Param::new_btn(QString name)
+QPushButton* Image_Param::new_btn(const QString& name)
 {
     QPushButton *emp = new QPushButton(name);
     emp->setFixedSize(W_X*2, W_Y);
@@ -117,12 +117,4 @@ void Image_Param::UpdatePreview()
 void Image_Param::Run()
 {
     std::cout << "Running . . ." << std::endl;
-}
-
-std::string GetCurrentWorkingDir(void)
-{
-    char buff[FILENAME_MAX];
-    GetCurrentDir( buff, FILENAME_MAX );
-    std::string current_working_dir(buff);
-    return current_working_dir;
 }

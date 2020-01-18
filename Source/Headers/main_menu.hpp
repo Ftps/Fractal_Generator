@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include <QWidget>
+#include <QLabel>
 #include <QPushButton>
 #include <QGridLayout>
 #include <QSignalMapper>
@@ -16,6 +17,7 @@ class Main_Menu : public QWidget {
     private:
         int next;
         QGridLayout *grid;
-        std::vector<QPushButton*> btn;
         QSignalMapper *sigmap;
+        std::vector<QPushButton*> btn;
+        std::vector<QLabel*> empty;
 };
