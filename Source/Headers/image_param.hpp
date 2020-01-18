@@ -36,6 +36,9 @@ class Image_Param : public QWidget {
         QLabel* new_label(const QString& name = "", int length = 1, int heigth = 1);
         QLineEdit* new_line(int size = 2);
         QPushButton* new_btn(const QString& name);
+        int InspectValues();
         void UpdatePreview();
         void Run();
 };
+
+inline bool isInteger(const std::string& s);

@@ -3,7 +3,7 @@
 QStringList l_name = {  "Pallete:", "Fractal Type:", "Real Center:",
                         "Imaginary Center:", "Julia Real Center:",
                         "Julia Imaginary Center:", "Resolution X:",
-                        "Reslution Y:", "Zoom:", "Power:",
+                        "Resolution Y:", "Zoom:", "Power:",
                         "Iterations:", "Conformal Constant:"};
 
 QStringList fractal = { "Mandelbrot Set", "Julia Set" };
@@ -103,6 +103,37 @@ QPushButton* Image_Param::new_btn(const QString& name)
     return emp;
 }
 
+int Image_Param::InspectValues()
+{
+    QTextStream out(stdout);
+    QString aux(lines[0]->text());
+
+    out << "Name: " << aux << endl;
+    //out << "Size: " << lines[0]->text().size() << endl;
+    if(!aux.size()){
+        return 0;
+    }
+    for(int i = 0; i < aux.size(); ++i){
+        if(aux[i] == " ") aux.replace(i, 1, "_");
+    }
+    lines[0]->setText(aux);
+
+    for(int i = 1; i < (int)lines.size(); ++i){
+        if(i == 5 || i == 6 || i == 9){
+            if(!isInteger(lines[i]->text().toStdString())) return i;
+        }
+        else{
+            try{
+                std::stold(lines[i]->text().toStdString());
+            } catch(std::invalid_argument const &e){
+                return i;
+            }
+        }
+    }
+
+    return -1;
+}
+
 void Image_Param::UpdatePreview()
 {
     QPixmap pic("Images/BO_Splice_center.png");
@@ -117,4 +148,17 @@ void Image_Param::UpdatePreview()
 void Image_Param::Run()
 {
     std::cout << "Running . . ." << std::endl;
+    std::cout << InspectValues() << std::endl;
+}
+
+
+
+inline bool isInteger(const std::string& s)
+{
+    if(s.empty()) return false;
+
+    char * p;
+    strtol(s.c_str(), &p, 10);
+
+    return (*p == 0);
 }
