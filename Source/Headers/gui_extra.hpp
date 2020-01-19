@@ -9,8 +9,8 @@
 #include <QLineEdit>
 #include <QComboBox>
 #include <QPixmap>
-#include <vector>
 #include <QStringList>
+#include <vector>
 
 // for debug
 #include <iostream>

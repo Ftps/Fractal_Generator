@@ -11,7 +11,7 @@ Pallete::Pallete(const std::string& filename)
     colors.reserve(color_num);
     for(int i = 0; i < color_num; ++i){
         fp >> aux_c;
-        colors.push_back(aux_c);
+        colors.push_back(new QColor(aux_c.c_str()));
     }
 
     form = 0;
@@ -35,52 +35,111 @@ Mandelbrot::Mandelbrot(const Img_Data& img) : Img_Data(img)
             map[i].push_back(0);
         }
     }
-}
 
-void Mandelbrot::run()
-{
     if(pp == 2) generate_p2();
+
+    draw_image();
 }
 
 void Mandelbrot::generate_p2()
 {
-    long double l, h, b_aux, aux_it;
-    std::complex<long double> c_it, c_aux;
+    long double l, h, b_aux, aux_it, a, b;
+    std::array<long double, 2> c_aux;
 
     l = LL/zoom;
     h = (res[1]*l)/res[0];
 
     cc = {cc.real() - l/2, cc.imag() + h/2};
-    c_aux = cj;
+    c_aux = {cj.real(), cj.imag()};
 
-    for(int i = 0; i < res[1]; ++i){
-        b_aux = cc.imag() - i*h/res[1];
-        for(int j = 0; j < res[0]; ++j){
-            c_it = {cc.real() + j*l/res[0], b_aux};
+    if(this->k){
+        for(int i = 0; i < res[1]; ++i){
+            b_aux = cc.imag() - i*h/res[1];
+            for(int j = 0; j < res[0]; ++j){
+                a = cc.real() + j*l/res[0];
+                b = b_aux;
 
-            if(!Julia){
-                c_aux = c_it;
-            }
-
-            for(int k = 0; k < it; ++k){
-                if(abs2(c_it) > 4){
-                    aux_it = log(log(abs2(c_it))/(2*log(2)));
-                    map[i][j] = ((k - (int)aux_it)%(color_num-1)) + 1;
-                    break;
+                if(!Julia){
+                    c_aux[0] = a;
+                    c_aux[1] = b;
                 }
 
-                c_it = c_aux + (c_it*c_it);
+                for(int k = 0; k < it; ++k){
+                    if(abs1(a,b) > 4){
+                        aux_it = log(log(abs1(a,b))/(2*log(2)));
+                        map[i][j] = ((k - (int)aux_it)%(color_num-1)) + 1;
+                        break;
+                    }
 
-                if(this->k){
-                    c_it += this->k/c_it;
+                    aux_it = a;
+                    a = c_aux[0] + a*a - b*b;
+                    b = c_aux[1] + 2*aux_it*b;
+
+                    aux_it = this->k/abs1(a,b);
+                    a = a*(a+aux_it);
+                    b = b*(a-aux_it);
                 }
             }
         }
     }
-    std::cout << "DONE" << std::endl;
+    else{
+        for(int i = 0; i < res[1]; ++i){
+            b_aux = cc.imag() - i*h/res[1];
+            for(int j = 0; j < res[0]; ++j){
+                a = cc.real() + j*l/res[0];
+                b = b_aux;
+
+                if(!Julia){
+                    c_aux[0] = a;
+                    c_aux[1] = b;
+                }
+
+                for(int k = 0; k < it; ++k){
+                    if(abs1(a,b) > 4){
+                        aux_it = log(log(abs1(a,b))/(2*log(2)));
+                        map[i][j] = ((k - (int)aux_it)%(color_num-1)) + 1;
+                        break;
+                    }
+
+                    aux_it = a;
+                    a = c_aux[0] + a*a - b*b;
+                    b = c_aux[1] + 2*aux_it*b;
+                }
+            }
+        }
+    }
 }
 
 
+void Mandelbrot::draw_image()
+{
+    QPainter paint;
+    image = new QImage(res[0], res[1], QImage::Format_RGB32);
+    image->fill(*colors[0]);
+    QPen pen;
+
+    paint.begin(image);
+    paint.setRenderHint(QPainter::Antialiasing, true);
+    pen.setWidth(1);
+
+    for(int i = 0; i < res[0]; ++i){
+        for(int j = 0; j < res[1]; ++j){
+            if(map[j][i]){
+                pen.setColor(*colors[map[j][i]]);
+                paint.setPen(pen);
+                paint.drawPoint(i, j);
+            }
+        }
+    }
+    paint.end();
+
+    if(!preview) image->save((IMG_PATH+name).c_str());
+}
+
+QImage Mandelbrot::get_image()
+{
+    return *image;
+}
 
 
 
@@ -88,4 +147,9 @@ template<typename T>
 T abs2(std::complex<T> c)
 {
     return c.real()*c.real() + c.imag()*c.imag();
+}
+
+inline long double abs1(long double a, long double b)
+{
+    return a*a + b*b;
 }

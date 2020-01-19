@@ -5,6 +5,7 @@ Fractal_Gen
 *.moc.*
 error.txt
 Images
+Images_Old
 test.cpp
 test
 mandel.cpp

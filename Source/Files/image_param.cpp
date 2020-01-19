@@ -116,7 +116,6 @@ int Image_Param::InspectValues()
 
 void Image_Param::Preview()
 {
-    QPixmap pic("Images/BO_Splice_center.png");
     int err;
     Error_Qt *error;
     Mandelbrot *mandel;
@@ -130,13 +129,13 @@ void Image_Param::Preview()
 
     GetImg_Data(true);
     mandel = new Mandelbrot(*data);
-    delete mandel;
-    delete data;
 
     prev->clear();
-    //prev->setStyleSheet("border-image:url(:/2.png);");
-    prev->setPixmap(pic);
+    prev->setPixmap(QPixmap::fromImage(mandel->get_image(), Qt::AutoColor));
     prev->show();
+
+    delete mandel;
+    delete data;
 }
 
 void Image_Param::Run()
@@ -154,7 +153,6 @@ void Image_Param::Run()
 
     GetImg_Data(false);
     mandel = new Mandelbrot(*data);
-    mandel->run();
     delete mandel;
     delete data;
 }
@@ -185,8 +183,8 @@ void Image_Param::GetImg_Data(bool preview)
 
     data->name = lines[0]->text().toStdString() + IMG_EXT;
 
-    if(!QString::compare(combos[1]->currentText(), fractal[0])) data->Julia = 0;
-    else data->Julia = 1;
+    if(!QString::compare(combos[1]->currentText(), fractal[0])) data->Julia = false;
+    else data->Julia = true;
 
     data->cc = {std::stold(lines[1]->text().toStdString()),
                 std::stold(lines[2]->text().toStdString())};
@@ -202,9 +200,11 @@ void Image_Param::GetImg_Data(bool preview)
     data->k = std::stold(lines[10]->text().toStdString());
 
     if(preview){
+        data->preview = true;
         data->res[1] = XX*((double)data->res[1]/(double)data->res[0]);
         data->res[0] = XX;
     }
+    else data->preview = false;
 }
 
 
