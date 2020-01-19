@@ -25,7 +25,7 @@ Pallete::Pallete(const std::string& filename)
     fp.close();
 }
 
-Mandelbrot::Mandelbrot(const Img_Data& img) : Img_Data(img)
+Mandelbrot::Mandelbrot(const Img_Data& img, QLabel* prog) : Img_Data(img)
 {
     map.reserve(res[1]);
     for(int i = 0; i < res[1]; ++i){
@@ -36,11 +36,27 @@ Mandelbrot::Mandelbrot(const Img_Data& img) : Img_Data(img)
         }
     }
 
+    this->prog = prog;
+
+    prog->clear();
+    prog->setText("0%");
+
     if(pp == 2) generate_p2();
     else if(pp == 3) generate_p3();
     else generate_pn();
 
+    prog->clear();
+    prog->setText("Revealing image . . .!");
+
     draw_image();
+
+    prog->clear();
+    prog->setText("Done!");
+}
+
+QImage Mandelbrot::get_image()
+{
+    return *image;
 }
 
 void Mandelbrot::generate_p2()
@@ -56,6 +72,7 @@ void Mandelbrot::generate_p2()
 
     if(this->k){
         for(int i = 0; i < res[1]; ++i){
+            progress(i);
             b_aux = cc.imag() - i*h/res[1];
             for(int j = 0; j < res[0]; ++j){
                 a = cc.real() + j*l/res[0];
@@ -86,6 +103,7 @@ void Mandelbrot::generate_p2()
     }
     else{
         for(int i = 0; i < res[1]; ++i){
+            progress(i);
             b_aux = cc.imag() - i*h/res[1];
             for(int j = 0; j < res[0]; ++j){
                 a = cc.real() + j*l/res[0];
@@ -125,6 +143,7 @@ void Mandelbrot::generate_p3()
 
     if(this->k){
         for(int i = 0; i < res[1]; ++i){
+            progress(i);
             b_aux = cc.imag() - i*h/res[1];
             for(int j = 0; j < res[0]; ++j){
                 a = cc.real() + j*l/res[0];
@@ -155,6 +174,7 @@ void Mandelbrot::generate_p3()
     }
     else{
         for(int i = 0; i < res[1]; ++i){
+            progress(i);
             b_aux = cc.imag() - i*h/res[1];
             for(int j = 0; j < res[0]; ++j){
                 a = cc.real() + j*l/res[0];
@@ -194,6 +214,7 @@ void Mandelbrot::generate_pn()
 
     if(this->k){
         for(int i = 0; i < res[1]; ++i){
+            progress(i);
             b_aux = cc.imag() - i*h/res[1];
             for(int j = 0; j < res[0]; ++j){
                 c_it = {cc.real() + j*l/res[0], b_aux};
@@ -218,6 +239,7 @@ void Mandelbrot::generate_pn()
     }
     else{
         for(int i = 0; i < res[1]; ++i){
+            progress(i);
             b_aux = cc.imag() - i*h/res[1];
             for(int j = 0; j < res[0]; ++j){
                 c_it = {cc.real() + j*l/res[0], b_aux};
@@ -265,9 +287,11 @@ void Mandelbrot::draw_image()
     if(!preview) image->save((IMG_PATH+name).c_str());
 }
 
-QImage Mandelbrot::get_image()
+void Mandelbrot::progress(int i)
 {
-    return *image;
+    std::string pr = std::to_string(((double)i)/(double)res[0]) + "%";
+    prog->clear();
+    prog->setText(pr.c_str());
 }
 
 

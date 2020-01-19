@@ -12,7 +12,7 @@ class Image_Param : public QWidget {
     private:
         Img_Data *data;
         QGridLayout *grid;
-        QLabel *prev;
+        QLabel *prev, *prog;
         std::vector<QLabel*> labels;
         std::vector<QLineEdit*> lines;
         std::vector<QComboBox*> combos;

@@ -62,14 +62,17 @@ Image_Param::Image_Param(QWidget *parent) : QWidget(parent)
     prev->setStyleSheet("border: 1px solid grey");
     grid->addWidget(prev, 8, 2, 8, 8);
 
+    prog = new_label(this, "0%", 2, 1);
+    grid->addWidget(prog, 16, 5, 1, 2);
+
     for(int i = 0; i < btns_n.size(); ++i){
         btns.push_back(new_btn(btns_n[i]));
-        grid->addWidget(btns.back(), 16, 4*i+1, 1, 2);
+        grid->addWidget(btns.back(), 17, 4*i+1, 1, 2);
         connect(btns.back(), &QPushButton::clicked, this, funcs[i]);
     }
 
     labels.push_back(new_label(this, "", 2));
-    grid->addWidget(labels.back(), 17, 10, 1, 2);
+    grid->addWidget(labels.back(), 18, 10, 1, 2);
 
     font.setPointSize(15);
     setFont(font);
@@ -128,7 +131,7 @@ void Image_Param::Preview()
     }
 
     GetImg_Data(true);
-    mandel = new Mandelbrot(*data);
+    mandel = new Mandelbrot(*data, prog);
 
     prev->clear();
     prev->setPixmap(QPixmap::fromImage(mandel->get_image(), Qt::AutoColor));
@@ -152,7 +155,7 @@ void Image_Param::Run()
     }
 
     GetImg_Data(false);
-    mandel = new Mandelbrot(*data);
+    mandel = new Mandelbrot(*data, prog);
     delete mandel;
     delete data;
 }
