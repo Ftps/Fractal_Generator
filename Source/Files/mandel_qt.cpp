@@ -37,6 +37,8 @@ Mandelbrot::Mandelbrot(const Img_Data& img) : Img_Data(img)
     }
 
     if(pp == 2) generate_p2();
+    else if(pp == 3) generate_p3();
+    else generate_pn();
 
     draw_image();
 }
@@ -110,6 +112,133 @@ void Mandelbrot::generate_p2()
     }
 }
 
+void Mandelbrot::generate_p3()
+{
+    long double l, h, b_aux, aux_it, a, b;
+    std::array<long double, 2> c_aux;
+
+    l = LL/zoom;
+    h = (res[1]*l)/res[0];
+
+    cc = {cc.real() - l/2, cc.imag() + h/2};
+    c_aux = {cj.real(), cj.imag()};
+
+    if(this->k){
+        for(int i = 0; i < res[1]; ++i){
+            b_aux = cc.imag() - i*h/res[1];
+            for(int j = 0; j < res[0]; ++j){
+                a = cc.real() + j*l/res[0];
+                b = b_aux;
+
+                if(!Julia){
+                    c_aux[0] = a;
+                    c_aux[1] = b;
+                }
+
+                for(int k = 0; k < it; ++k){
+                    if(abs1(a,b) > 4){
+                        aux_it = log(log(abs1(a,b))/(2*log(2)));
+                        map[i][j] = ((k - (int)aux_it)%(color_num-1)) + 1;
+                        break;
+                    }
+
+                    aux_it = a;
+                    a = c_aux[0] + a*(a*a - 3*b*b);
+                    b = c_aux[1] + b*(3*aux_it*aux_it - b*b);
+
+                    aux_it = this->k/abs1(a,b);
+                    a = a*(a+aux_it);
+                    b = b*(a-aux_it);
+                }
+            }
+        }
+    }
+    else{
+        for(int i = 0; i < res[1]; ++i){
+            b_aux = cc.imag() - i*h/res[1];
+            for(int j = 0; j < res[0]; ++j){
+                a = cc.real() + j*l/res[0];
+                b = b_aux;
+
+                if(!Julia){
+                    c_aux[0] = a;
+                    c_aux[1] = b;
+                }
+
+                for(int k = 0; k < it; ++k){
+                    if(abs1(a,b) > 4){
+                        aux_it = log(log(abs1(a,b))/(2*log(2)));
+                        map[i][j] = ((k - (int)aux_it)%(color_num-1)) + 1;
+                        break;
+                    }
+
+                    aux_it = a;
+                    a = c_aux[0] + a*(a*a - 3*b*b);
+                    b = c_aux[1] + b*(3*aux_it*aux_it - b*b);
+                }
+            }
+        }
+    }
+}
+
+void Mandelbrot::generate_pn()
+{
+    long double l, h, aux_it, b_aux;
+    std::complex<long double> c_aux, c_it;
+
+    l = LL/zoom;
+    h = (res[1]*l)/res[0];
+
+    cc = {cc.real() - l/2, cc.imag() + h/2};
+    c_aux = cj;
+
+    if(this->k){
+        for(int i = 0; i < res[1]; ++i){
+            b_aux = cc.imag() - i*h/res[1];
+            for(int j = 0; j < res[0]; ++j){
+                c_it = {cc.real() + j*l/res[0], b_aux};
+
+                if(!Julia){
+                    c_aux = c_it;
+                }
+
+                for(int k = 0; k < it; ++k){
+                    if(abs2(c_it) > 4){
+                        aux_it = log(log(abs2(c_it))/(2*log(2)));
+                        map[i][j] = ((k - (int)aux_it)%(color_num-1)) + 1;
+                        break;
+                    }
+
+                    c_it = c_aux + pow(c_it, pp);
+
+                    c_it += this->k/c_it;
+                }
+            }
+        }
+    }
+    else{
+        for(int i = 0; i < res[1]; ++i){
+            b_aux = cc.imag() - i*h/res[1];
+            for(int j = 0; j < res[0]; ++j){
+                c_it = {cc.real() + j*l/res[0], b_aux};
+
+                if(!Julia){
+                    c_aux = c_it;
+                }
+
+                for(int k = 0; k < it; ++k){
+                    if(abs2(c_it) > 4){
+                        aux_it = log(log(abs2(c_it))/(2*log(2)));
+                        map[i][j] = ((k - (int)aux_it)%(color_num-1)) + 1;
+                        break;
+                    }
+
+                    c_it = c_aux + pow(c_it, pp);
+                }
+            }
+        }
+    }
+}
 
 void Mandelbrot::draw_image()
 {
