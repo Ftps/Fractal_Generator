@@ -1,12 +1,6 @@
 #pragma once
 
-#include <QApplication>
-#include <QWidget>
-#include <QLabel>
-#include <QPushButton>
-#include <QGridLayout>
-#include <QSignalMapper>
-#include <vector>
+#include "gui_extra.hpp"
 
 class Main_Menu : public QWidget {
     public:

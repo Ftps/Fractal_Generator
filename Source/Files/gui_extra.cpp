@@ -1,4 +1,4 @@
-#include "../Headers/error_qt.hpp"
+#include "../Headers/gui_extra.hpp"
 
 Error_Qt::Error_Qt(const QString& err_msg, QWidget *parent) : QWidget(parent)
 {
@@ -12,6 +12,7 @@ Error_Qt::Error_Qt(const QString& err_msg, QWidget *parent) : QWidget(parent)
     msg.push_back(new QLabel(err_msg, this));
     msg.back()->setFixedSize(300, 100);
     msg.back()->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
+    msg.back()->setWordWrap(true);
     grid->addWidget(msg.back(), 1, 1, 1, 6);
 
     btn = new QPushButton("Okay");
@@ -39,4 +40,25 @@ Error_Qt::~Error_Qt()
 void Error_Qt::Okay()
 {
     delete this;
+}
+
+bool isIntegerP(const std::string& s)
+{
+    if(s.empty()) return false;
+    else if(s[0] == '-') return false;
+
+    char *p;
+    strtol(s.c_str(), &p, 10);
+
+    return (*p == 0);
+}
+
+bool isLDouble(const std::string& s)
+{
+    if(s.empty()) return false;
+
+    char *p;
+    strtold(s.c_str(), &p);
+
+    return (*p == 0);
 }

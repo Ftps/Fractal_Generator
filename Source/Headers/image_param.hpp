@@ -1,32 +1,16 @@
 #pragma once
 
-#include <QApplication>
-#include <QWidget>
-#include <QPushButton>
-#include <QLabel>
-#include <QGridLayout>
-#include <QSignalMapper>
-#include <QLineEdit>
-#include <QComboBox>
-#include <QPixmap>
-#include <vector>
+#include <filesystem>
 
 #include "mandel_qt.hpp"
-#include "error_qt.hpp"
-
-// for debug
-#include <iostream>
-#include <QTextStream>
-#include <typeinfo>
-
-#define W_X 100
-#define W_Y 50
+#include "gui_extra.hpp"
 
 class Image_Param : public QWidget {
     public:
         Image_Param(QWidget *parent = 0);
         ~Image_Param();
     private:
+        Img_Data *data;
         QGridLayout *grid;
         QLabel *prev;
         std::vector<QLabel*> labels;
@@ -34,13 +18,17 @@ class Image_Param : public QWidget {
         std::vector<QComboBox*> combos;
         std::vector<QPushButton*> btns;
 
-        QLabel* new_label(const QString& name = "", int length = 1, int heigth = 1);
-        QLineEdit* new_line(int size = 2);
-        QPushButton* new_btn(const QString& name);
         int InspectValues();
-        void UpdatePreview();
+        void Preview();
         void Run();
+        QStringList GetPallete();
+        void GetImg_Data(bool preview);
 };
 
-inline bool isIntegerP(const std::string& s);
-inline bool isLDouble(const std::string& s);
+template<typename T>
+QLabel* new_label(T* tt, const QString& name = "", int length = 1, int heigth = 1);
+
+template<typename T>
+QLineEdit* new_line(T* tt, int size = 2);
+
+QPushButton* new_btn(const QString& name);

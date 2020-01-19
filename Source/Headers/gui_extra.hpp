@@ -5,7 +5,20 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QGridLayout>
+#include <QSignalMapper>
+#include <QLineEdit>
+#include <QComboBox>
+#include <QPixmap>
 #include <vector>
+#include <QStringList>
+
+// for debug
+#include <iostream>
+#include <QTextStream>
+#include <typeinfo>
+
+#define W_X 100
+#define W_Y 50
 
 class Error_Qt : public QWidget {
     public:
@@ -18,3 +31,7 @@ class Error_Qt : public QWidget {
 
         void Okay();
 };
+
+
+bool isIntegerP(const std::string& s);
+bool isLDouble(const std::string& s);
