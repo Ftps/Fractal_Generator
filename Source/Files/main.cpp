@@ -17,16 +17,14 @@ int main(int argc, char *argv[])
         menu.hide();
 
         if(menu.Next() == 1){
-            std::cout << "Running Image Generator . . ." << std::endl;
+            //std::cout << "Running Image Generator . . ." << std::endl;
             img.show();
             app.exec();
-            img.hide();
+            menu.Reset();
         }
         else if(menu.Next() == 2){
             std::cout << "Running Pallete Generator . . ." << std::endl;
-        }
-        else{
-            std::cout << "Exiting . . ." << std::endl;
+            menu.Reset();
         }
     }while(menu.Next());
 
