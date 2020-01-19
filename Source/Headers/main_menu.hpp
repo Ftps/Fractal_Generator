@@ -1,11 +1,6 @@
 #pragma once
 
-#include <QApplication>
-#include <QWidget>
-#include <QPushButton>
-#include <QGridLayout>
-#include <QSignalMapper>
-#include <vector>
+#include "gui_extra.hpp"
 
 class Main_Menu : public QWidget {
     public:
@@ -16,6 +11,7 @@ class Main_Menu : public QWidget {
     private:
         int next;
         QGridLayout *grid;
-        std::vector<QPushButton*> btn;
         QSignalMapper *sigmap;
+        std::vector<QPushButton*> btn;
+        std::vector<QLabel*> empty;
 };

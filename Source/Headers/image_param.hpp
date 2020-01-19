@@ -1,36 +1,16 @@
 #pragma once
 
-#include <QApplication>
-#include <QWidget>
-#include <QPushButton>
-#include <QLabel>
-#include <QGridLayout>
-#include <QSignalMapper>
-#include <QLineEdit>
-#include <QComboBox>
-#include <QPixmap>
-#include <string>
-#include <vector>
-#include <unistd.h>
+#include <filesystem>
 
-// for debug
-#include <iostream>
-#include <QTextStream>
-#include <typeinfo>
-
-#define W_X 100
-#define W_Y 50
-#define GetCurrentDir getcwd
-
-struct Image_Data{
-    std::string name, pal;
-};
+#include "mandel_qt.hpp"
+#include "gui_extra.hpp"
 
 class Image_Param : public QWidget {
     public:
         Image_Param(QWidget *parent = 0);
         ~Image_Param();
     private:
+        Img_Data *data;
         QGridLayout *grid;
         QLabel *prev;
         std::vector<QLabel*> labels;
@@ -38,11 +18,17 @@ class Image_Param : public QWidget {
         std::vector<QComboBox*> combos;
         std::vector<QPushButton*> btns;
 
-        QLabel* new_label(QString name = "", int length = 1, int heigth = 1);
-        QLineEdit* new_line(int size = 2);
-        QPushButton* new_btn(QString name);
-        void UpdatePreview();
+        int InspectValues();
+        void Preview();
         void Run();
+        QStringList GetPallete();
+        void GetImg_Data(bool preview);
 };
 
-std::string GetCurrentWorkingDir(void);
+template<typename T>
+QLabel* new_label(T* tt, const QString& name = "", int length = 1, int heigth = 1);
+
+template<typename T>
+QLineEdit* new_line(T* tt, int size = 2);
+
+QPushButton* new_btn(const QString& name);
