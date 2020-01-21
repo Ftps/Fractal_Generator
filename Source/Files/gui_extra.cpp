@@ -26,6 +26,7 @@ Error_Qt::Error_Qt(const QString& err_msg, QWidget *parent) : QWidget(parent)
 
     font.setPointSize(15);
     setFont(font);
+    setWindowTitle("Error!");
 }
 
 Error_Qt::~Error_Qt()
@@ -61,4 +62,12 @@ bool isLDouble(const std::string& s)
     strtold(s.c_str(), &p);
 
     return (*p == 0);
+}
+
+QPushButton* new_btn(const QString& name, int size)
+{
+    QPushButton *emp = new QPushButton(name);
+    emp->setFixedSize(W_X*size, W_Y);
+
+    return emp;
 }

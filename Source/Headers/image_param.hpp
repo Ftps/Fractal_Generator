@@ -1,6 +1,6 @@
 #pragma once
 
-#include <filesystem>
+#include <thread>
 
 #include "mandel_qt.hpp"
 #include "gui_extra.hpp"
@@ -12,7 +12,10 @@ class Image_Param : public QWidget {
     private:
         Img_Data *data;
         QGridLayout *grid;
-        QLabel *prev, *prog;
+        QLabel *prev, *current;
+        QProgressBar *prog;
+        Error_Qt *error;
+        bool running;
         std::vector<QLabel*> labels;
         std::vector<QLineEdit*> lines;
         std::vector<QComboBox*> combos;
@@ -23,12 +26,7 @@ class Image_Param : public QWidget {
         void Run();
         QStringList GetPallete();
         void GetImg_Data(bool preview);
+        void getProg(int value);
+        void getCurr(QString doing);
+        void Connect(Mandelbrot *mandel);
 };
-
-template<typename T>
-QLabel* new_label(T* tt, const QString& name = "", int length = 1, int heigth = 1);
-
-template<typename T>
-QLineEdit* new_line(T* tt, int size = 2);
-
-QPushButton* new_btn(const QString& name);

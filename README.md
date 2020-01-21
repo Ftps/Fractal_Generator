@@ -16,13 +16,14 @@ The Julia Center point corresponds to the value of c of the iterable function wh
 
 ### TO-DO LIST:
 - pallette generator;
-- progress status;
+- thread killer;
 - image organization;
 - save image parameters after generation;
 - zooms deeper than 1e16;
 
 ### DONE:
 - Qt C++ GUI;
+- progress status;
 - preview;
 - 2nd and 3rd power fractals;
 - general power fractals;

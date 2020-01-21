@@ -10,7 +10,9 @@
 #include <QComboBox>
 #include <QPixmap>
 #include <QStringList>
+#include <QProgressBar>
 #include <vector>
+#include <filesystem>
 
 // for debug
 #include <iostream>
@@ -35,3 +37,25 @@ class Error_Qt : public QWidget {
 
 bool isIntegerP(const std::string& s);
 bool isLDouble(const std::string& s);
+
+template<typename T>
+QLabel* new_label(T* tt, const QString& name = "", int length = 1, int heigth = 1)
+{
+    QLabel *emp = new QLabel(name, tt);
+    emp->setFixedSize(W_X*length, W_Y*heigth);
+    emp->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
+    emp->setWordWrap(true);
+
+    return emp;
+}
+
+template<typename T>
+QLineEdit* new_line(T* tt, int size = 2)
+{
+    QLineEdit *emp = new QLineEdit(tt);
+    emp->setFixedSize(W_X*size, W_Y);
+
+    return emp;
+}
+
+QPushButton* new_btn(const QString& name, int size = 2);

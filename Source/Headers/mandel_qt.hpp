@@ -11,7 +11,6 @@
 #include <QColor>
 #include <QImage>
 #include <QPainter>
-#include <QLabel>
 
 #define LOG {std::cout << "IN FILE " << __FILE__ << " IN LINE " << __LINE__ << std::endl; }
 
@@ -41,23 +40,30 @@ struct Img_Data : public Pallete {
     Img_Data(const std::string& filename) : Pallete(filename) { this->filename = filename; }
 };
 
-class Mandelbrot : private Img_Data {
+class Mandelbrot : public QObject, private Img_Data {
+    Q_OBJECT
     public:
-        Mandelbrot(const Img_Data& img, QLabel* prog);
+        Mandelbrot(const Img_Data& img) : Img_Data(img) {}
+        virtual ~Mandelbrot();
+        void run();
         QImage get_image();
     private:
         std::vector<std::vector<int>> map;
         QImage *image;
-        QLabel *prog;
 
         void generate_p2();
         void generate_p3();
         void generate_pn();
         void draw_image();
-        void progress(int i);
+    signals:
+        void progress(int value);
+        void current(QString doing);
+
 };
 
 template<typename T>
 T abs2(std::complex<T> c);
 
 inline long double abs1(long double a, long double b);
+
+#include "image_param.hpp"

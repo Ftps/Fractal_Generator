@@ -11,15 +11,15 @@ const QStringList error_n = {   "Name cannot be empty.", "Real Center must be a 
                                 "Iterations must be a positive integer.",
                                 "Conformal Constant must be a number." };
 
-const QStringList l_name = {    "Pallete:", "Fractal Type:", "Real Center:",
-                                "Imaginary Center:", "Julia Real Center:",
-                                "Julia Imaginary Center:", "Resolution X:",
-                                "Resolution Y:", "Zoom:", "Power:",
-                                "Iterations:", "Conformal Constant:"};
+const QStringList l_name = {    "Pallete:", "Fractal Type:", "Zoom:",
+                                "Real Center:", "Imaginary Center:",
+                                "Power:", "Julia Real Center:",
+                                "Julia Imaginary Center:", "Iterations:",
+                                "Resolution X:", "Resolution Y:",
+                                "Conformal Constant:"};
 
 const QStringList fractal = { "Mandelbrot Set", "Julia Set" };
 const QStringList btns_n = { "Run", "Preview", "Exit" };
-
 
 Image_Param::Image_Param(QWidget *parent) : QWidget(parent)
 {
@@ -36,15 +36,15 @@ Image_Param::Image_Param(QWidget *parent) : QWidget(parent)
 
     labels.push_back(new_label(this, "Name:", 2));
     grid->addWidget(labels.back(), 1, 1, 1, 2);
-    lines.push_back(new_line(this, 7));
-    grid->addWidget(lines.back(), 1, 3, 1, 7);
+    lines.push_back(new_line(this, 10));
+    grid->addWidget(lines.back(), 1, 3, 1, 10);
 
     for(int i = 0; i < l_name.size(); ++i){
         labels.push_back(new_label(this, l_name[i], 2));
-        grid->addWidget(labels.back(), i/2+2, 5*(i%2)+1, 1, 2);
+        grid->addWidget(labels.back(), i/3+2, 4*(i%3)+1, 1, 2);
         if(i < 2){
             combos.push_back(new QComboBox());
-            grid->addWidget(combos.back(), i/2+2, 5*(i%2)+3, 1, 2);
+            grid->addWidget(combos.back(), i/3+2, 4*(i%3)+3, 1, 2);
             if(!i){
                 combos.back()->addItems(GetPallete());
             }
@@ -54,29 +54,41 @@ Image_Param::Image_Param(QWidget *parent) : QWidget(parent)
         }
         else{
             lines.push_back(new_line(this));
-            grid->addWidget(lines.back(), i/2+2, 5*(i%2)+3, 1, 2);
+            grid->addWidget(lines.back(), i/3+2, 4*(i%3)+3, 1, 2);
         }
     }
 
-    prev = new_label(this, "Input parameters and press preview!", 8, 8);
-    prev->setStyleSheet("border: 1px solid grey");
-    grid->addWidget(prev, 8, 2, 8, 8);
+    labels.push_back(new_label(this, "", 12));
+    grid->addWidget(labels.back(), 8, 1, 1, 12);
 
-    prog = new_label(this, "0%", 2, 1);
-    grid->addWidget(prog, 16, 5, 1, 2);
+    prev = new_label(this, "Input parameters and press preview!", 7, 7);
+    prev->setStyleSheet("border: 1px solid grey");
+    grid->addWidget(prev, 9, 4, 7, 7);
+
+    current = new_label(this, "", 7, 1);
+    grid->addWidget(current, 16, 4, 1, 7);
+
+    prog = new QProgressBar();
+    prog->setValue(0);
+    prog->setTextVisible(true);
+    grid->addWidget(prog, 17, 4, 1, 7);
 
     for(int i = 0; i < btns_n.size(); ++i){
-        btns.push_back(new_btn(btns_n[i]));
-        grid->addWidget(btns.back(), 17, 4*i+1, 1, 2);
+        btns.push_back(new_btn(btns_n[i], (i == 1) ? 3 : 2));
         connect(btns.back(), &QPushButton::clicked, this, funcs[i]);
     }
+    grid->addWidget(btns[0], 18, 3, 1, 2);
+    grid->addWidget(btns[1], 18, 6, 1, 3);
+    grid->addWidget(btns[2], 18, 10, 1, 2);
 
     labels.push_back(new_label(this, "", 2));
-    grid->addWidget(labels.back(), 18, 10, 1, 2);
+    grid->addWidget(labels.back(), 19, 13, 1, 2);
 
-    font.setPointSize(15);
+    font.setPointSize(13);
     setFont(font);
+    setWindowTitle("Fractal Generator");
     data = NULL;
+    running = false;
 }
 
 Image_Param::~Image_Param()
@@ -106,7 +118,7 @@ int Image_Param::InspectValues()
     lines[0]->setText(aux);
 
     for(int i = 1; i < (int)lines.size(); ++i){
-        if(i == 5 || i == 6 || i == 9){
+        if(i == 7 || i == 8 || i == 9){
             if(!isIntegerP(lines[i]->text().toStdString())) return i;
         }
         else{
@@ -120,44 +132,70 @@ int Image_Param::InspectValues()
 void Image_Param::Preview()
 {
     int err;
-    Error_Qt *error;
-    Mandelbrot *mandel;
 
-    if((err = InspectValues()) != -1){
-        error = new Error_Qt(error_n[err]);
-        error->show();
+    if(!running){
+        if((err = InspectValues()) != -1){
+            error = new Error_Qt(error_n[err]);
+            error->show();
 
-        return;
+            return;
+        }
+
+        auto f = [this]{
+            Mandelbrot *mandel;
+
+            running = true;
+
+            GetImg_Data(true);
+            mandel = new Mandelbrot(*data);
+            Connect(mandel);
+            mandel->run();
+
+            prev->clear();
+            prev->setPixmap(QPixmap::fromImage(mandel->get_image(), Qt::AutoColor));
+            prev->show();
+
+            delete mandel;
+            delete data;
+
+            running = false;
+        };
+
+        std::thread m(f);
+        m.detach();
     }
-
-    GetImg_Data(true);
-    mandel = new Mandelbrot(*data, prog);
-
-    prev->clear();
-    prev->setPixmap(QPixmap::fromImage(mandel->get_image(), Qt::AutoColor));
-    prev->show();
-
-    delete mandel;
-    delete data;
 }
 
 void Image_Param::Run()
 {
     int err;
-    Error_Qt *error;
-    Mandelbrot *mandel;
 
-    if((err = InspectValues()) != -1){
-        error = new Error_Qt(error_n[err]);
-        error->show();
+    if(!running){
+        if((err = InspectValues()) != -1){
+            error = new Error_Qt(error_n[err]);
+            error->show();
 
-        return;
+            return;
+        }
+
+        auto f = [this]{
+            Mandelbrot *mandel;
+
+            running = true;
+
+            GetImg_Data(false);
+            mandel = new Mandelbrot(*data);
+            Connect(mandel);
+            mandel->run();
+            delete mandel;
+            delete data;
+
+            running = false;
+        };
+
+        std::thread m(f);
+        m.detach();
     }
-
-    GetImg_Data(false);
-    mandel = new Mandelbrot(*data, prog);
-    delete mandel;
-    delete data;
 }
 
 QStringList Image_Param::GetPallete()
@@ -189,17 +227,21 @@ void Image_Param::GetImg_Data(bool preview)
     if(!QString::compare(combos[1]->currentText(), fractal[0])) data->Julia = false;
     else data->Julia = true;
 
-    data->cc = {std::stold(lines[1]->text().toStdString()),
-                std::stold(lines[2]->text().toStdString())};
-    data->cj = {std::stold(lines[3]->text().toStdString()),
-                std::stold(lines[4]->text().toStdString())};
+    data->zoom = pow(10, std::stold(lines[1]->text().toStdString()));
 
-    data->res = {std::stoi(lines[5]->text().toStdString()),
-                 std::stoi(lines[6]->text().toStdString())};
+    data->cc = {std::stold(lines[2]->text().toStdString()),
+                std::stold(lines[3]->text().toStdString())};
+    data->pp = std::stold(lines[4]->text().toStdString());
 
-    data->zoom = pow(10, std::stold(lines[7]->text().toStdString()));
-    data->pp = std::stold(lines[8]->text().toStdString());
-    data->it = std::stoi(lines[9]->text().toStdString());
+    if(data->Julia){
+    data->cj = {std::stold(lines[5]->text().toStdString()),
+                std::stold(lines[6]->text().toStdString())};
+    }
+    else data->cj = 0;
+    data->it = std::stoi(lines[7]->text().toStdString());
+
+    data->res = {std::stoi(lines[8]->text().toStdString()),
+                 std::stoi(lines[9]->text().toStdString())};
     data->k = std::stold(lines[10]->text().toStdString());
 
     if(preview){
@@ -210,34 +252,18 @@ void Image_Param::GetImg_Data(bool preview)
     else data->preview = false;
 }
 
-
-
-
-
-template<typename T>
-QLabel* new_label(T* tt, const QString& name, int length, int heigth)
+void Image_Param::getProg(int value)
 {
-    QLabel *emp = new QLabel(name, tt);
-    emp->setFixedSize(W_X*length, W_Y*heigth);
-    emp->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
-    emp->setWordWrap(true);
-
-    return emp;
+    prog->setValue(value);
 }
 
-template<typename T>
-QLineEdit* new_line(T* tt, int size)
+void Image_Param::getCurr(QString doing)
 {
-    QLineEdit *emp = new QLineEdit(tt);
-    emp->setFixedSize(W_X*size, W_Y);
-
-    return emp;
+    current->setText(doing);
 }
 
-QPushButton* new_btn(const QString& name)
+void Image_Param::Connect(Mandelbrot *mandel)
 {
-    QPushButton *emp = new QPushButton(name);
-    emp->setFixedSize(W_X*2, W_Y);
-
-    return emp;
+    connect(mandel, &Mandelbrot::progress, this, &Image_Param::getProg);
+    connect(mandel, &Mandelbrot::current, this, &Image_Param::getCurr);
 }

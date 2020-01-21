@@ -25,10 +25,13 @@ Pallete::Pallete(const std::string& filename)
     fp.close();
 }
 
-Mandelbrot::Mandelbrot(const Img_Data& img, QLabel* prog) : Img_Data(img)
+void Mandelbrot::run()
 {
+    emit current("Allocating memory . . .");
+
     map.reserve(res[1]);
     for(int i = 0; i < res[1]; ++i){
+        emit progress(100*(double)i/(double)res[1]);
         map.push_back(std::vector<int>());
         map[i].reserve(res[0]);
         for(int j = 0; j < res[0]; ++j){
@@ -36,22 +39,30 @@ Mandelbrot::Mandelbrot(const Img_Data& img, QLabel* prog) : Img_Data(img)
         }
     }
 
-    this->prog = prog;
-
-    prog->clear();
-    prog->setText("0%");
+    emit current("Calculating image points . . .");
 
     if(pp == 2) generate_p2();
     else if(pp == 3) generate_p3();
     else generate_pn();
 
-    prog->clear();
-    prog->setText("Revealing image . . .!");
+    emit current("Revealing image . . .");
 
     draw_image();
+}
 
-    prog->clear();
-    prog->setText("Done!");
+Mandelbrot::~Mandelbrot()
+{
+    emit current("Cleaning memory . . .");
+
+    for(int i = 0; i < res[1]; ++i){
+        emit progress(100*(double)i/(double)res[1]);
+        map[i].clear();
+    }
+    map.clear();
+
+    delete image;
+    emit progress(100);
+    emit current("Done!");
 }
 
 QImage Mandelbrot::get_image()
@@ -72,7 +83,7 @@ void Mandelbrot::generate_p2()
 
     if(this->k){
         for(int i = 0; i < res[1]; ++i){
-            progress(i);
+            emit progress(100*(i/(double)res[1]));
             b_aux = cc.imag() - i*h/res[1];
             for(int j = 0; j < res[0]; ++j){
                 a = cc.real() + j*l/res[0];
@@ -83,7 +94,7 @@ void Mandelbrot::generate_p2()
                     c_aux[1] = b;
                 }
 
-                for(int k = 0; k < it; ++k){
+                for(int k = 1; k <= it; ++k){
                     if(abs1(a,b) > 4){
                         aux_it = log(log(abs1(a,b))/(2*log(2)));
                         map[i][j] = ((k - (int)aux_it)%(color_num-1)) + 1;
@@ -103,7 +114,7 @@ void Mandelbrot::generate_p2()
     }
     else{
         for(int i = 0; i < res[1]; ++i){
-            progress(i);
+            emit progress(100*(i/(double)res[1]));
             b_aux = cc.imag() - i*h/res[1];
             for(int j = 0; j < res[0]; ++j){
                 a = cc.real() + j*l/res[0];
@@ -114,7 +125,7 @@ void Mandelbrot::generate_p2()
                     c_aux[1] = b;
                 }
 
-                for(int k = 0; k < it; ++k){
+                for(int k = 1; k <= it; ++k){
                     if(abs1(a,b) > 4){
                         aux_it = log(log(abs1(a,b))/(2*log(2)));
                         map[i][j] = ((k - (int)aux_it)%(color_num-1)) + 1;
@@ -143,7 +154,7 @@ void Mandelbrot::generate_p3()
 
     if(this->k){
         for(int i = 0; i < res[1]; ++i){
-            progress(i);
+            emit progress(100*(i/(double)res[1]));
             b_aux = cc.imag() - i*h/res[1];
             for(int j = 0; j < res[0]; ++j){
                 a = cc.real() + j*l/res[0];
@@ -154,7 +165,7 @@ void Mandelbrot::generate_p3()
                     c_aux[1] = b;
                 }
 
-                for(int k = 0; k < it; ++k){
+                for(int k = 1; k <= it; ++k){
                     if(abs1(a,b) > 4){
                         aux_it = log(log(abs1(a,b))/(2*log(2)));
                         map[i][j] = ((k - (int)aux_it)%(color_num-1)) + 1;
@@ -174,7 +185,7 @@ void Mandelbrot::generate_p3()
     }
     else{
         for(int i = 0; i < res[1]; ++i){
-            progress(i);
+            emit progress(100*(i/(double)res[1]));
             b_aux = cc.imag() - i*h/res[1];
             for(int j = 0; j < res[0]; ++j){
                 a = cc.real() + j*l/res[0];
@@ -185,7 +196,7 @@ void Mandelbrot::generate_p3()
                     c_aux[1] = b;
                 }
 
-                for(int k = 0; k < it; ++k){
+                for(int k = 1; k <= it; ++k){
                     if(abs1(a,b) > 4){
                         aux_it = log(log(abs1(a,b))/(2*log(2)));
                         map[i][j] = ((k - (int)aux_it)%(color_num-1)) + 1;
@@ -214,7 +225,7 @@ void Mandelbrot::generate_pn()
 
     if(this->k){
         for(int i = 0; i < res[1]; ++i){
-            progress(i);
+            emit progress(100*(i/(double)res[1]));
             b_aux = cc.imag() - i*h/res[1];
             for(int j = 0; j < res[0]; ++j){
                 c_it = {cc.real() + j*l/res[0], b_aux};
@@ -223,7 +234,7 @@ void Mandelbrot::generate_pn()
                     c_aux = c_it;
                 }
 
-                for(int k = 0; k < it; ++k){
+                for(int k = 1; k <= it; ++k){
                     if(abs2(c_it) > 4){
                         aux_it = log(log(abs2(c_it))/(2*log(2)));
                         map[i][j] = ((k - (int)aux_it)%(color_num-1)) + 1;
@@ -239,7 +250,7 @@ void Mandelbrot::generate_pn()
     }
     else{
         for(int i = 0; i < res[1]; ++i){
-            progress(i);
+            emit progress(100*(i/(double)res[1]));
             b_aux = cc.imag() - i*h/res[1];
             for(int j = 0; j < res[0]; ++j){
                 c_it = {cc.real() + j*l/res[0], b_aux};
@@ -274,6 +285,7 @@ void Mandelbrot::draw_image()
     pen.setWidth(1);
 
     for(int i = 0; i < res[0]; ++i){
+        emit progress(100*(i/(double)res[0]));
         for(int j = 0; j < res[1]; ++j){
             if(map[j][i]){
                 pen.setColor(*colors[map[j][i]]);
@@ -285,13 +297,6 @@ void Mandelbrot::draw_image()
     paint.end();
 
     if(!preview) image->save((IMG_PATH+name).c_str());
-}
-
-void Mandelbrot::progress(int i)
-{
-    std::string pr = std::to_string(((double)i)/(double)res[0]) + "%";
-    prog->clear();
-    prog->setText(pr.c_str());
 }
 
 
