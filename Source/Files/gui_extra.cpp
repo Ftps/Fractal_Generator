@@ -71,3 +71,12 @@ QPushButton* new_btn(const QString& name, int size)
 
     return emp;
 }
+
+QTableWidgetItem* new_item(const QString& name)
+{
+    QTableWidgetItem *emp = new QTableWidgetItem(name);
+    emp->setFlags(emp->flags()^Qt::ItemIsEditable);
+    emp->setTextAlignment(Qt::AlignHCenter);
+
+    return emp;
+}

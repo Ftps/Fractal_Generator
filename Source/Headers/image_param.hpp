@@ -15,11 +15,12 @@ class Image_Param : public QWidget {
         QLabel *prev, *current;
         QProgressBar *prog;
         Error_Qt *error;
-        bool running;
+        bool terminated;
         std::vector<QLabel*> labels;
         std::vector<QLineEdit*> lines;
         std::vector<QComboBox*> combos;
         std::vector<QPushButton*> btns;
+        std::thread *m;
 
         int InspectValues();
         void Preview();

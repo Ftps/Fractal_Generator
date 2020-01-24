@@ -10,21 +10,25 @@ int main(int argc, char *argv[])
     Image_Param img;
     Pallete_GUI pal;
 
-    menu.show();
-    app.exec();
-    menu.hide();
+    do{
+        menu.show();
+        app.exec();
+        menu.hide();
 
-    if(menu.Next() == 1){
-        //std::cout << "Running Image Generator . . ." << std::endl;
-        img.show();
-        app.exec();
-        menu.Reset();
-    }
-    else if(menu.Next() == 2){
-        pal.show();
-        app.exec();
-        menu.Reset();
-    }
+        if(menu.Next() == 1){
+            //std::cout << "Running Image Generator . . ." << std::endl;
+            img.show();
+            app.exec();
+            menu.Reset();
+        }
+        else if(menu.Next() == 2){
+            pal.show();
+            app.exec();
+            pal.hide();
+        }
+    }while(menu.Next());
+
+    std::terminate();
 
     return 0;
 }

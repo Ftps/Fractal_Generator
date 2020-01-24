@@ -88,7 +88,7 @@ Image_Param::Image_Param(QWidget *parent) : QWidget(parent)
     setFont(font);
     setWindowTitle("Fractal Generator");
     data = NULL;
-    running = false;
+    m = NULL;
 }
 
 Image_Param::~Image_Param()
@@ -133,7 +133,7 @@ void Image_Param::Preview()
 {
     int err;
 
-    if(!running){
+    if(m == NULL){
         if((err = InspectValues()) != -1){
             error = new Error_Qt(error_n[err]);
             error->show();
@@ -143,8 +143,6 @@ void Image_Param::Preview()
 
         auto f = [this]{
             Mandelbrot *mandel;
-
-            running = true;
 
             GetImg_Data(true);
             mandel = new Mandelbrot(*data);
@@ -158,11 +156,11 @@ void Image_Param::Preview()
             delete mandel;
             delete data;
 
-            running = false;
+            m = NULL;
         };
 
-        std::thread m(f);
-        m.detach();
+        m = new std::thread(f);
+        m->detach();
     }
 }
 
@@ -170,7 +168,7 @@ void Image_Param::Run()
 {
     int err;
 
-    if(!running){
+    if(m == NULL){
         if((err = InspectValues()) != -1){
             error = new Error_Qt(error_n[err]);
             error->show();
@@ -181,8 +179,6 @@ void Image_Param::Run()
         auto f = [this]{
             Mandelbrot *mandel;
 
-            running = true;
-
             GetImg_Data(false);
             mandel = new Mandelbrot(*data);
             Connect(mandel);
@@ -190,11 +186,11 @@ void Image_Param::Run()
             delete mandel;
             delete data;
 
-            running = false;
+            m = NULL;
         };
 
-        std::thread m(f);
-        m.detach();
+        m = new std::thread(f);
+        m->detach();
     }
 }
 

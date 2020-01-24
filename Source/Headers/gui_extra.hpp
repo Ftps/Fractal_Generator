@@ -1,5 +1,7 @@
 #pragma once
 
+#define NDEBUG
+
 #include <QApplication>
 #include <QWidget>
 #include <QPushButton>
@@ -11,8 +13,13 @@
 #include <QPixmap>
 #include <QStringList>
 #include <QProgressBar>
+#include <QTableWidget>
+#include <QTableWidgetItem>
+#include <QHeaderView>
+#include <QBrush>
 #include <vector>
 #include <filesystem>
+#include <fstream>
 
 // for debug
 #include <iostream>
@@ -59,3 +66,4 @@ QLineEdit* new_line(T* tt, int size = 2)
 }
 
 QPushButton* new_btn(const QString& name, int size = 2);
+QTableWidgetItem* new_item(const QString& name);
