@@ -2,11 +2,13 @@
 
 #include <iostream>
 #include <cmath>
+#include <cstdlib>
 #include <string>
 #include <vector>
 #include <fstream>
 #include <memory>
 #include <complex>
+#include <boost/format.hpp>
 
 #include <QColor>
 #include <QImage>
@@ -21,6 +23,20 @@
 #define PAL_EXT ".pl"
 #define IMG_EXT ".png"
 #define IMG_PATH "Images/"
+#define VIDEO_PATH "Config/video.conf"
+#define VIDEO_SAVE "Config/Temp/"
+#define VID_PROG "ffmpeg"
+#define VID_FORMAT ".mp4"
+
+#define S (std::string)
+
+struct Video_Set {
+    public:
+    int fps;
+    long double zps, itchange, zoom_init;
+
+    Video_Set();
+};
 
 struct Pallete {
     int form, color_num;
@@ -43,12 +59,13 @@ struct Img_Data : public Pallete {
 class Mandelbrot : public QObject, private Img_Data {
     Q_OBJECT
     public:
-        Mandelbrot(const Img_Data& img) : Img_Data(img) {}
+        Mandelbrot(const Img_Data& img, bool *ter, bool *terd) : Img_Data(img) { terminate = ter; terminated = terd; }
         virtual ~Mandelbrot();
         void run();
         QImage get_image();
     private:
         std::vector<std::vector<int>> map;
+        bool *terminate, *terminated;
         QImage *image;
 
         void generate_p2();

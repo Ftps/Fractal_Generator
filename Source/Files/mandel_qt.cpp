@@ -1,5 +1,16 @@
 #include "../Headers/mandel_qt.hpp"
 
+Video_Set::Video_Set()
+{
+    std::ifstream fp(VIDEO_PATH);
+
+    fp >> fps;
+    fp >> zps;
+    fp >> itchange;
+    fp >> zoom_init;
+
+}
+
 Pallete::Pallete(const std::string& filename)
 {
     std::ifstream fp(filename);
@@ -45,6 +56,10 @@ void Mandelbrot::run()
     else if(pp == 3) generate_p3();
     else generate_pn();
 
+    if(*terminate){
+        *terminated = true;
+        return;
+    }
     emit current("Revealing image . . .");
 
     draw_image();
@@ -85,6 +100,7 @@ void Mandelbrot::generate_p2()
         for(int i = 0; i < res[1]; ++i){
             emit progress(100*(i/(double)res[1]));
             b_aux = cc.imag() - i*h/res[1];
+            if(*terminate) return;
             for(int j = 0; j < res[0]; ++j){
                 a = cc.real() + j*l/res[0];
                 b = b_aux;
@@ -116,6 +132,7 @@ void Mandelbrot::generate_p2()
         for(int i = 0; i < res[1]; ++i){
             emit progress(100*(i/(double)res[1]));
             b_aux = cc.imag() - i*h/res[1];
+            if(*terminate) return;
             for(int j = 0; j < res[0]; ++j){
                 a = cc.real() + j*l/res[0];
                 b = b_aux;
@@ -156,6 +173,7 @@ void Mandelbrot::generate_p3()
         for(int i = 0; i < res[1]; ++i){
             emit progress(100*(i/(double)res[1]));
             b_aux = cc.imag() - i*h/res[1];
+            if(*terminate) return;
             for(int j = 0; j < res[0]; ++j){
                 a = cc.real() + j*l/res[0];
                 b = b_aux;
@@ -187,6 +205,7 @@ void Mandelbrot::generate_p3()
         for(int i = 0; i < res[1]; ++i){
             emit progress(100*(i/(double)res[1]));
             b_aux = cc.imag() - i*h/res[1];
+            if(*terminate) return;
             for(int j = 0; j < res[0]; ++j){
                 a = cc.real() + j*l/res[0];
                 b = b_aux;
@@ -227,6 +246,7 @@ void Mandelbrot::generate_pn()
         for(int i = 0; i < res[1]; ++i){
             emit progress(100*(i/(double)res[1]));
             b_aux = cc.imag() - i*h/res[1];
+            if(*terminate) return;
             for(int j = 0; j < res[0]; ++j){
                 c_it = {cc.real() + j*l/res[0], b_aux};
 
@@ -252,6 +272,7 @@ void Mandelbrot::generate_pn()
         for(int i = 0; i < res[1]; ++i){
             emit progress(100*(i/(double)res[1]));
             b_aux = cc.imag() - i*h/res[1];
+            if(*terminate) return;
             for(int j = 0; j < res[0]; ++j){
                 c_it = {cc.real() + j*l/res[0], b_aux};
 
@@ -296,7 +317,7 @@ void Mandelbrot::draw_image()
     }
     paint.end();
 
-    if(!preview) image->save((IMG_PATH+name).c_str());
+    if(!preview) image->save((name).c_str());
 }
 
 

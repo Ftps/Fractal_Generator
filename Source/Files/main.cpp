@@ -28,7 +28,5 @@ int main(int argc, char *argv[])
         }
     }while(menu.Next());
 
-    std::terminate();
-
     return 0;
 }

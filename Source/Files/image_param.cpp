@@ -19,7 +19,7 @@ const QStringList l_name = {    "Pallete:", "Fractal Type:", "Zoom:",
                                 "Conformal Constant:"};
 
 const QStringList fractal = { "Mandelbrot Set", "Julia Set" };
-const QStringList btns_n = { "Run", "Preview", "Exit" };
+const QStringList btns_n = { "Run", "Preview", "Video", "Exit" };
 
 Image_Param::Image_Param(QWidget *parent) : QWidget(parent)
 {
@@ -29,7 +29,8 @@ Image_Param::Image_Param(QWidget *parent) : QWidget(parent)
     std::vector<std::function<void()>> funcs;
     funcs.push_back([this]{ Run(); });
     funcs.push_back([this]{ Preview(); });
-    funcs.push_back([this]{ QApplication::quit(); });
+    funcs.push_back([this]{ Video(); });
+    funcs.push_back([this]{ terminate = true; do{ current->setText("Waiting on termination call . . ."); current->show(); }while(!terminated); QApplication::quit(); });
 
     labels.push_back(new_label(this));
     grid->addWidget(labels.back(), 0, 0);
@@ -67,19 +68,19 @@ Image_Param::Image_Param(QWidget *parent) : QWidget(parent)
 
     current = new_label(this, "", 7, 1);
     grid->addWidget(current, 16, 4, 1, 7);
+    connect(this, &Image_Param::sendCurr, this, &Image_Param::getCurr);
 
     prog = new QProgressBar();
     prog->setValue(0);
     prog->setTextVisible(true);
     grid->addWidget(prog, 17, 4, 1, 7);
+    connect(this, &Image_Param::sendProg, this, &Image_Param::getProg);
 
     for(int i = 0; i < btns_n.size(); ++i){
-        btns.push_back(new_btn(btns_n[i], (i == 1) ? 3 : 2));
+        btns.push_back(new_btn(btns_n[i]));
         connect(btns.back(), &QPushButton::clicked, this, funcs[i]);
+        grid->addWidget(btns[i], 18, 2+3*i, 1, 2);
     }
-    grid->addWidget(btns[0], 18, 3, 1, 2);
-    grid->addWidget(btns[1], 18, 6, 1, 3);
-    grid->addWidget(btns[2], 18, 10, 1, 2);
 
     labels.push_back(new_label(this, "", 2));
     grid->addWidget(labels.back(), 19, 13, 1, 2);
@@ -87,6 +88,8 @@ Image_Param::Image_Param(QWidget *parent) : QWidget(parent)
     font.setPointSize(13);
     setFont(font);
     setWindowTitle("Fractal Generator");
+    terminate = false;
+    terminated = true;
     data = NULL;
     m = NULL;
 }
@@ -144,19 +147,24 @@ void Image_Param::Preview()
         auto f = [this]{
             Mandelbrot *mandel;
 
+            terminated = false;
+
             GetImg_Data(true);
-            mandel = new Mandelbrot(*data);
+            mandel = new Mandelbrot(*data, &terminate, &terminated);
             Connect(mandel);
             mandel->run();
 
-            prev->clear();
-            prev->setPixmap(QPixmap::fromImage(mandel->get_image(), Qt::AutoColor));
-            prev->show();
+            if(!terminate){
+                prev->clear();
+                prev->setPixmap(QPixmap::fromImage(mandel->get_image(), Qt::AutoColor));
+                prev->show();
 
+                delete data;
+
+                m = NULL;
+                terminated = true;
+            }
             delete mandel;
-            delete data;
-
-            m = NULL;
         };
 
         m = new std::thread(f);
@@ -179,13 +187,89 @@ void Image_Param::Run()
         auto f = [this]{
             Mandelbrot *mandel;
 
+            terminated = false;
+
             GetImg_Data(false);
-            mandel = new Mandelbrot(*data);
+            mandel = new Mandelbrot(*data, &terminate, &terminated);
             Connect(mandel);
             mandel->run();
             delete mandel;
-            delete data;
 
+            if(!terminate){
+                delete data;
+                m = NULL;
+                terminated = true;
+            }
+        };
+
+        m = new std::thread(f);
+        m->detach();
+    }
+}
+
+void Image_Param::Video()
+{
+    int err;
+
+    if(m == NULL){
+        if((err = InspectValues()) != -1){
+            error = new Error_Qt(error_n[err]);
+            error->show();
+
+            return;
+        }
+
+        auto f = [this]{
+            Mandelbrot *mandel;
+            Video_Set v;
+            long double zoom, zr;
+            int iter, frames;
+            std::string command, name;
+            boost::format fmt((std::string)VIDEO_SAVE + (std::string)"image%05d.png");
+
+            terminated = false;
+
+            GetImg_Data(false);
+            zoom = data->zoom;
+            iter = data->it;
+            name = data->name;
+            name.replace(name.end()-4, name.end(), VID_FORMAT);
+            std::cout << name << std::endl;
+            zr = pow(v.zps, 1/(double)v.fps);
+
+            data->zoom = v.zoom_init;
+
+            frames = log(zoom/data->zoom)/log(zr);
+
+            sendCurr("Rendering video . . .");
+
+            for(int i = 0; i < frames; ++i){
+                data->name = boost::str(fmt%(i+1));
+                data->zoom = data->zoom*zr;
+                data->it = iter*((data->zoom - v.zoom_init)*(1 - 1/v.itchange)/(zoom - v.zoom_init) + 1/v.itchange);
+
+                sendProg((int)((double)i/(double)frames));
+
+                mandel = new Mandelbrot(*data, &terminate, &terminated);
+                mandel->run();
+                delete mandel;
+            }
+
+            LOG
+            command = S VID_PROG + S" -r " + std::to_string(v.fps);
+            command = command + S" -s " + std::to_string(data->res[0]) + "x" + std::to_string(data->res[1]);
+            command = command + S" -i " +  S VIDEO_SAVE + S"image%05d.png " + name;
+
+            system(command.c_str());
+            LOG
+
+            for(int i = 0; i < frames; ++i){
+                remove(boost::str(fmt%(i+1)).c_str());
+            }
+
+            sendCurr("Done!");
+            sendProg(100);
+            terminated = true;
             m = NULL;
         };
 
@@ -218,7 +302,7 @@ void Image_Param::GetImg_Data(bool preview)
     filename = PAL_PATH + filename + PAL_EXT;
     data = new Img_Data(filename);
 
-    data->name = lines[0]->text().toStdString() + IMG_EXT;
+    data->name = IMG_PATH + lines[0]->text().toStdString() + IMG_EXT;
 
     if(!QString::compare(combos[1]->currentText(), fractal[0])) data->Julia = false;
     else data->Julia = true;
