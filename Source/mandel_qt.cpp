@@ -1,4 +1,4 @@
-#include "../Headers/mandel_qt.hpp"
+#include "mandel_qt.hpp"
 
 Video_Set::Video_Set()
 {

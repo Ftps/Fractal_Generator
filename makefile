@@ -2,38 +2,27 @@ TARGET = Fractal_Gen
 CC = g++
 MOC = moc-qt5
 LIBS = -lm -lboost_system -lboost_filesystem -lpthread -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -lQt5Widgets -lQt5Gui -lQt5Core
-CFLAGS = -Wall -pedantic -o3 -fPIC -std=c++17
-INCDIRS = -I/usr/include/qt -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtCore -I/usr/include/qt/QtGui
-H_LOC = Source/Headers
-O_LOC = Source/Files
+HEAD = ./Headers
+SRCS = ./Source
+INCDIRS = -I/usr/include/qt -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtCore -I/usr/include/qt/QtGui -I$(HEAD)
+CFLAGS = -Wall -pedantic -O3 -fPIC -std=c++17 $(INCDIRS)
+.PHONY: clean
 
-HEADERS = $(wildcard $(H_LOC)/*.hpp)
-MOCS = $(shell grep -l Q_OBJECT $(HEADERS))
-
+DEPS = $(wildcard $(HEAD)/*.hpp)
+MOCS = $(shell grep -l Q_OBJECT $(DEPS))
 MOC_SOURCES = $(MOCS:.hpp=.moc.cpp)
-OBJECTS = $(patsubst %.cpp, %.o, $(wildcard $(O_LOC)/*.cpp)) $(MOC_SOURCES:.cpp=.o)
+OBJS = $(patsubst %.cpp, %.o, $(wildcard $(SRCS)/*.cpp)) $(MOC_SOURCES:.cpp=.o)
 
-.PHONY: default all clean
-
-default: $(TARGET)
-all: default
-
-#$(info $$MOC_S is [${MOC_SOURCES}])
-
-%.o: %.cpp
-	$(CC) $(CFLAGS) $(INCDIRS) -c $< -o $@
+%.o: %.cpp $(DEPS)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 %.moc.cpp: %.hpp
 	$(MOC) $(INCDIRS) $< -o $@
 
-.PRECIOUS: $(TARGET) $(OBJECTS)
-
-$(TARGET): $(OBJECTS)
-	$(CC) $(OBJECTS) -Wall $(LIBS) -o $@
-	-rm -f $(O_LOC)/*.o
-	-rm -f $(H_LOC)/*.o
+$(TARGET): $(OBJS)
+	$(CC) -o $@ $^ $(LIBS)
 
 clean:
 	-rm -f $(TARGET)
-	-rm -f $(O_LOC)/*.o
-	-rm -f $(H_LOC)/*.o
+	-rm -f $(SRCS)/*.o
+	-rm -f $(HEAD)/*.o

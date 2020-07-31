@@ -15,6 +15,7 @@
 #include <QProgressBar>
 #include <QTableWidget>
 #include <QTableWidgetItem>
+#include <QColorDialog>
 #include <QHeaderView>
 #include <QBrush>
 #include <vector>

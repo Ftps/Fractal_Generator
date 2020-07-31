@@ -1,4 +1,4 @@
-#include "../Headers/gui_extra.hpp"
+#include "gui_extra.hpp"
 
 Error_Qt::Error_Qt(const QString& err_msg, QWidget *parent) : QWidget(parent)
 {

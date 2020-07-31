@@ -10,10 +10,11 @@ class Pallete_GUI : public QWidget {
         Pallete_GUI(QWidget *parent = 0);
         ~Pallete_GUI();
     private:
+		QTableWidget *table;
         bool clear;
         QGridLayout *grid;
-        QTableWidget *table;
         QHeaderView *header;
+		QLabel *prev;
         std::vector<QLabel*> labels;
         std::vector<QPushButton*> btns;
         std::vector<QLineEdit*> lines;

@@ -1,15 +1,11 @@
-#include "../Headers/pallete.hpp"
+#include "pallete.hpp"
 
-const QStringList ll = { "Pallete Name:", "Color to add in HexRGB (#xxxxxx):", "Number of Interpolation Points:" };
-const QStringList btn_nn = { "Create Pallete", "Add Color", "Interpolate", "Delete Last", "Exit" };
+const QStringList btn_nn = { "Create Pallete", "Add Color", "Delete Last", "Exit" };
 const QStringList tbl_n = { "Color:", "Number of Iterations:" };
 const QStringList tab_i = { "#------", "-" };
-const QStringList err_pal = {   "Color format doesn't match.",
+const QStringList err_pal = {   "Color format doesn't match.", "Pallete requires a name.",
                                 "Interpolation value must be a positive or null integer.",
-                                "Cannot interpolate an empty color.", "Pallete requires a name.",
-                                "Pallete requires at least two colors." };
-
-const QBrush white("#ffffff");
+								"Pallete requires at least two colors." };
 
 Pallete_GUI::Pallete_GUI(QWidget *parent) : QWidget(parent)
 {
@@ -19,19 +15,11 @@ Pallete_GUI::Pallete_GUI(QWidget *parent) : QWidget(parent)
     std::vector<std::function<void()>> funcs;
     funcs.push_back([this]{ CreatePallete(); });
     funcs.push_back([this]{ AddColor(); });
-    funcs.push_back([this]{ Interpolate(); });
     funcs.push_back([this]{ if(!clear) Delete(); });
     funcs.push_back([this]{ QApplication::quit(); });
 
     labels.push_back(new_label(this));
     grid->addWidget(labels.back(), 0, 0);
-
-    for(int i = 0; i < (int)ll.size(); ++i){
-        labels.push_back(new_label(this, ll[i], 3));
-        grid->addWidget(labels.back(), i+1, 3, 1, 3);
-        lines.push_back(new_line(this, 3));
-        grid->addWidget(lines.back(), i+1, 6, 1, 3);
-    }
 
     table = new QTableWidget(2, 1, this);
     header = table->verticalHeader();
@@ -111,7 +99,7 @@ void Pallete_GUI::AddColor()
     Error_Qt *error;
     QBrush *brush;
 
-    color = new QColor(lines[1]->text());
+    color = new QColor(QColorDialog::getColor(Qt::yellow, this));
 
     if(!color->isValid()){
         error = new Error_Qt(err_pal[0]);
@@ -153,15 +141,15 @@ void Pallete_GUI::Interpolate()
 
         return;
     }
-    else if(!isIntegerP(lines[2]->text().toStdString())){
+    else if(!isIntegerP(lines[1]->text().toStdString())){
         error = new Error_Qt(err_pal[1]);
         error->show();
 
         return;
     }
 
-    iters.back() = std::atoi(lines[2]->text().toStdString().c_str());
-    if(iters.back()) table->item(1, table->columnCount()-1)->setText(lines[2]->text());
+    iters.back() = std::atoi(lines[1]->text().toStdString().c_str());
+    if(iters.back()) table->item(1, table->columnCount()-1)->setText(lines[1]->text());
     else table->item(1, table->columnCount()-1)->setText(tab_i[1]);
 }
 
@@ -171,8 +159,6 @@ void Pallete_GUI::Delete()
 
     if(table->columnCount() > 1){
         table->removeColumn(table->columnCount()-1);
-        colors.pop_back();
-        iters.pop_back();
     }
     else{
         clear = true;
@@ -180,12 +166,11 @@ void Pallete_GUI::Delete()
         for(int i = 0; i < 2; ++i){
             item = table->item(i, 0);
             item->setText(tab_i[i]);
-            if(!i) item->setBackground(white);
+            if(!i) item->setBackground(Qt::white);
         }
-
-        colors.pop_back();
-        iters.pop_back();
     }
+	colors.pop_back();
+	iters.pop_back();
 }
 
 void Pallete_GUI::WriteFile()

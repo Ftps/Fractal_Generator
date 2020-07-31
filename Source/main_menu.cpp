@@ -1,4 +1,4 @@
-#include "../Headers/main_menu.hpp"
+#include "main_menu.hpp"
 
 QList<QString> btn_n({"Generate Image", "Generate Pallete", "Exit"});
 

@@ -1,6 +1,6 @@
-#include "../Headers/main_menu.hpp"
-#include "../Headers/image_param.hpp"
-#include "../Headers/pallete.hpp"
+#include "main_menu.hpp"
+#include "image_param.hpp"
+#include "pallete.hpp"
 
 
 int main(int argc, char *argv[])
@@ -22,9 +22,10 @@ int main(int argc, char *argv[])
             menu.Reset();
         }
         else if(menu.Next() == 2){
-            pal.show();
-            app.exec();
-            pal.hide();
+			std::cout << "Coming soon!" << std::endl;
+			//pal.show();
+            //app.exec();
+            //pal.hide();
         }
     }while(menu.Next());
 

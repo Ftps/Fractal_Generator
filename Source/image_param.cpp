@@ -1,5 +1,5 @@
-#include "../Headers/image_param.hpp"
-#include "../Headers/gui_extra.hpp"
+#include "image_param.hpp"
+#include "gui_extra.hpp"
 
 const QStringList error_n = {   "Name cannot be empty.", "Real Center must be a number.",
                                 "Imaginary Center must be a number.",
