@@ -14,8 +14,6 @@
 #include <QImage>
 #include <QPainter>
 
-#define LOG {std::cout << "IN FILE " << __FILE__ << " IN LINE " << __LINE__ << std::endl; }
-
 #define XX 400.0
 #define LL 4
 

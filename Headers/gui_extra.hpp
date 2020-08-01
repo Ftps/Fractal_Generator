@@ -27,6 +27,8 @@
 #include <QTextStream>
 #include <typeinfo>
 
+#define LOG {std::cout << "IN LINE " << __LINE__ << " OF FILE " << __FILE__ << std::endl; fflush(stdout);}
+
 #define W_X 100
 #define W_Y 50
 
@@ -42,6 +44,20 @@ class Error_Qt : public QWidget {
         void Okay();
 };
 
+class Line_Popup : public QWidget {
+	public:
+		Line_Popup(const QString& text, QString* in, QWidget *parent = 0);
+		~Line_Popup();
+	private:
+		QString* in;
+		QGridLayout* grid;
+		QPushButton *okay, *close;
+		QLineEdit* input;
+		std::vector<QLabel*> msg;
+
+		void Okay();
+		void Close();
+};
 
 bool isIntegerP(const std::string& s);
 bool isLDouble(const std::string& s);

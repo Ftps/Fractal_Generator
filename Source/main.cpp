@@ -22,10 +22,9 @@ int main(int argc, char *argv[])
             menu.Reset();
         }
         else if(menu.Next() == 2){
-			std::cout << "Coming soon!" << std::endl;
-			//pal.show();
-            //app.exec();
-            //pal.hide();
+			pal.show();
+            app.exec();
+            pal.hide();
         }
     }while(menu.Next());
 

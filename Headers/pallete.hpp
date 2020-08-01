@@ -17,7 +17,6 @@ class Pallete_GUI : public QWidget {
 		QLabel *prev;
         std::vector<QLabel*> labels;
         std::vector<QPushButton*> btns;
-        std::vector<QLineEdit*> lines;
         std::vector<QColor*> colors;
         std::vector<int> iters;
 
@@ -25,7 +24,7 @@ class Pallete_GUI : public QWidget {
         void AddColor();
         void Interpolate();
         void Delete();
-        void WriteFile();
+        void WriteFile(const std::string& aux);
 };
 
 
