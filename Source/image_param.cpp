@@ -255,13 +255,11 @@ void Image_Param::Video()
                 delete mandel;
             }
 
-            LOG
             command = S VID_PROG + S" -r " + std::to_string(v.fps);
             command = command + S" -s " + std::to_string(data->res[0]) + "x" + std::to_string(data->res[1]);
             command = command + S" -i " +  S VIDEO_SAVE + S"image%05d.png " + name;
 
             system(command.c_str());
-            LOG
 
             for(int i = 0; i < frames; ++i){
                 remove(boost::str(fmt%(i+1)).c_str());
